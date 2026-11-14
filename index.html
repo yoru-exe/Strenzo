@@ -567,6 +567,51 @@
       .topbar { gap: 10px; }
     }
 
+
+    /* Status */
+    .status-led { margin-left: auto; width: 8px; height: 8px; border-radius: 50%; background: #48e4ac; box-shadow: 0 0 10px rgba(53,214,160,.6); animation: pulse 2.4s ease-in-out infinite; }
+    .status-led[data-state="warn"] { background: #ffb454; box-shadow: 0 0 10px rgba(255,180,84,.6); }
+    .status-led[data-state="down"] { background: #ff626e; box-shadow: 0 0 10px rgba(255,98,110,.6); }
+    .status-led[data-state="checking"] { background: #7b8c88; box-shadow: none; animation: blink 1.2s ease-in-out infinite; }
+    .status-banner { --tone: #48e4ac; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 20px 22px; margin-bottom: 34px; background: radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--tone) 14%, transparent), transparent 60%), linear-gradient(155deg, #101c22, #0b141a); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); border-radius: 20px; box-shadow: var(--shadow); }
+    .status-banner[data-state="warn"] { --tone: #ffb454; } .status-banner[data-state="down"] { --tone: #ff626e; } .status-banner[data-state="checking"] { --tone: #8ba39c; }
+    .status-banner-icon { display: grid; place-items: center; flex: 0 0 auto; width: 52px; height: 52px; color: var(--tone); background: color-mix(in srgb, var(--tone) 13%, #0d171d); border: 1px solid color-mix(in srgb, var(--tone) 30%, transparent); border-radius: 16px; }
+    .status-banner-icon svg { width: 24px; height: 24px; }
+    .status-banner[data-state="checking"] .status-banner-icon svg { animation: spin 1s linear infinite; }
+    .status-banner-text { flex: 1 1 240px; min-width: 0; }
+    .status-banner-text h2 { margin: 0; font-size: 20px; font-weight: 820; letter-spacing: -.04em; }
+    .status-banner-text p { margin: 5px 0 0; color: #8fa09c; font-size: 12px; line-height: 1.55; }
+    .status-banner-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .status-checked { color: #71847f; font-size: 10px; font-variant-numeric: tabular-nums; }
+    .recheck { min-height: 38px; padding: 0 15px; font-size: 11px; }
+    .recheck.loading { pointer-events: none; opacity: .8; }
+    .recheck.loading svg { animation: spin .8s linear infinite; }
+    .status-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 19px; }
+    .status-card { --tone: #48e4ac; padding: 20px; background: linear-gradient(155deg, rgba(17,29,37,.98), rgba(11,19,25,.98)); border: 1px solid rgba(183,216,207,.095); border-radius: 17px; transition: border-color .2s ease, transform .2s var(--ease); animation: rise .5s var(--ease) both; }
+    .status-card:nth-child(2) { animation-delay: .05s; } .status-card:nth-child(3) { animation-delay: .1s; }
+    .status-card:hover { border-color: color-mix(in srgb, var(--tone) 35%, transparent); transform: translateY(-2px); }
+    .status-card[data-state="slow"] { --tone: #ffb454; } .status-card[data-state="down"] { --tone: #ff626e; } .status-card[data-state="checking"] { --tone: #8ba39c; }
+    .status-card-head { display: flex; align-items: flex-start; gap: 12px; }
+    .status-card-icon { display: grid; place-items: center; flex: 0 0 auto; width: 40px; height: 40px; color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, #0d171d); border: 1px solid color-mix(in srgb, var(--tone) 26%, transparent); border-radius: 12px; }
+    .status-card-icon svg { width: 18px; height: 18px; }
+    .status-card-title { flex: 1; min-width: 0; }
+    .status-card-title h3 { margin: 0; font-size: 15px; font-weight: 800; letter-spacing: -.03em; }
+    .status-card-title p { margin: 4px 0 0; color: #7b8e89; font-size: 10px; line-height: 1.5; }
+    .status-pill { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; padding: 5px 9px; color: var(--tone, #48e4ac); background: color-mix(in srgb, var(--tone, #48e4ac) 11%, transparent); border: 1px solid color-mix(in srgb, var(--tone, #48e4ac) 24%, transparent); border-radius: 999px; font-size: 9px; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
+    .status-pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+    .status-pill.busy i { animation: blink 1s ease-in-out infinite; }
+    .status-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px 0 14px; margin-top: 16px; border-top: 1px solid var(--line); }
+    .metric span { display: block; white-space: nowrap; color: #6f827d; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .metric strong { display: block; margin-top: 6px; color: #dbe7e3; font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .meter { height: 5px; overflow: hidden; background: rgba(255,255,255,.055); border-radius: 99px; }
+    .meter span { display: block; height: 100%; background: linear-gradient(90deg, color-mix(in srgb, var(--tone) 70%, #0d171d), var(--tone)); border-radius: 99px; transition: width .6s var(--ease); }
+    .ticks-label { display: flex; justify-content: space-between; margin: 16px 0 7px; color: #5f716d; font-size: 9px; font-weight: 650; }
+    .ticks { display: flex; gap: 3px; height: 24px; }
+    .tick { flex: 1; border-radius: 3px; background: #48e4ac; opacity: .85; }
+    .tick.slow { background: #ffb454; } .tick.down { background: #ff626e; } .tick.empty, .tick.checking { background: rgba(255,255,255,.07); opacity: 1; }
+    @media (max-width: 1160px) { .status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 700px) { .status-grid { grid-template-columns: 1fr; gap: 12px; } .status-banner { padding: 18px; } .status-banner-actions { width: 100%; justify-content: space-between; } }
+
     /* Mobile drawer backdrop */
     .sidebar-backdrop { position: fixed; inset: 0; z-index: 25; background: rgba(2,5,7,.62); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
     @media (min-width: 701px) { .sidebar-backdrop { display: none; } }
@@ -704,6 +749,7 @@
         <a class="nav-link" data-route="home" href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V10Z"/></svg>Discover</a>
         <a class="nav-link" data-route="live" href="#live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 8.7 16 12l-6.5 3.3V8.7Z" fill="currentColor" stroke="none"/></svg>Live now<span class="nav-count" id="liveNavCount">—</span></a>
         <a class="nav-link" data-route="favorites" href="#favorites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>My favorites<span class="nav-count" id="favNavCount">0</span></a>
+        <a class="nav-link" data-route="status" href="#status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>Status<span class="status-led" id="statusLed" data-state="checking" title="Checking servers…"></span></a>
       </nav>
       <div class="side-divider"></div>
       <div class="side-label">Categories</div>
@@ -761,7 +807,8 @@
       'use strict';
 
       // API order: preferred domain first, then automatic backups.
-      const API_DOMAINS = ['https://strmfree.pk', 'https://strmfree.st', 'https://streamfree.top'];
+      // Order matters: Primary, then Fallback, then Mirror.
+      const API_DOMAINS = ['https://strmfree.pk', 'https://streamfree.top', 'https://strmfree.st'];
       const DEFAULT_CATEGORIES = ['soccer', 'basketball', 'hockey', 'combat', 'baseball', 'football', 'racing', 'tennis', 'cricket'];
       const CACHE_TTL = 60 * 1000;
       const CATEGORY_CACHE_TTL = 10 * 60 * 1000;
@@ -807,7 +854,7 @@
       function getRoute() {
         const raw = decodeURIComponent(location.hash.replace(/^#/, '') || 'home');
         if (raw.startsWith('watch/')) return { page: 'watch', key: raw.slice(6) };
-        if (['home', 'live', 'favorites'].includes(raw)) return { page: raw };
+        if (['home', 'live', 'favorites', 'status'].includes(raw)) return { page: raw };
         if (state.categories.includes(raw.toLowerCase())) return { page: 'category', category: raw.toLowerCase() };
         return { page: 'home' };
       }
@@ -846,6 +893,7 @@
       // ── Connection popup ──
       let netModalOpen = false, netLastFocus = null;
       function showNetModal(kind, hasCached) {
+        if (getRoute().page === 'status') return; // the Status page already explains it
         const modal = $('#netModal');
         const offline = kind === 'offline';
         modal.dataset.kind = offline ? 'offline' : 'api';
@@ -957,6 +1005,7 @@
         nav.innerHTML = state.categories.map(category => `<a class="category-link" data-category="${esc(category)}" href="#${esc(category)}"><span class="category-dot">${categoryIcon(category)}</span>${esc(titleCase(category))}</a>`).join('');
         $('#liveNavCount').textContent = state.streams.filter(isLive).length;
         $('#favNavCount').textContent = state.favorites.length;
+        updateStatusLed();
       }
       function streamCard(stream) {
         const key = esc(stream.stream_key || '');
@@ -1088,6 +1137,112 @@
           </div>
           <div class="footer-note"><span>Feed not loading? Try another source or a backup domain from the player controls.</span><span>STRENZO · Build by AziF &amp; Yoru</span></div>`;
       }
+      // ── Server status ──
+      const SERVERS = [
+        { id: 'primary',  label: 'Primary',  desc: 'Handles everything by default.',  domain: API_DOMAINS[0] },
+        { id: 'fallback', label: 'Fallback', desc: 'Takes over if the primary is down.', domain: API_DOMAINS[1] },
+        { id: 'mirror',   label: 'Mirror',   desc: 'Last-resort copy of the service.', domain: API_DOMAINS[2] }
+      ];
+      const HEALTH_KEY = 'sf_health_v1', HISTORY_LEN = 30, SLOW_MS = 1500;
+      const health = { checking: false, checkedAt: 0, servers: {} };
+      (function initHealth() {
+        let saved = {};
+        try { saved = JSON.parse(localStorage.getItem(HEALTH_KEY) || '{}') || {}; } catch (_) {}
+        SERVERS.forEach(server => { health.servers[server.id] = { status: 'checking', ms: null, history: Array.isArray(saved[server.id]) ? saved[server.id].slice(-HISTORY_LEN) : [] }; });
+      })();
+      async function pingServer(domain) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 6000);
+        const start = performance.now();
+        try {
+          const response = await fetch(domain + '/api/v1/categories', { method: 'GET', mode: 'cors', cache: 'no-store', credentials: 'omit', headers: { 'Accept': 'application/json' }, signal: controller.signal });
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          await response.arrayBuffer();
+          return { ok: true, ms: Math.round(performance.now() - start) };
+        } catch (_) { return { ok: false, ms: null }; }
+        finally { clearTimeout(timer); }
+      }
+      async function checkHealth(announce = false) {
+        if (health.checking) return;
+        health.checking = true;
+        if (getRoute().page === 'status') render();
+        const results = navigator.onLine === false ? SERVERS.map(() => ({ ok: false, ms: null })) : await Promise.all(SERVERS.map(server => pingServer(server.domain)));
+        SERVERS.forEach((server, index) => {
+          const result = results[index], entry = health.servers[server.id];
+          entry.ms = result.ms;
+          entry.status = !result.ok ? 'down' : result.ms >= SLOW_MS ? 'slow' : 'ok';
+          entry.history = [...entry.history, entry.status].slice(-HISTORY_LEN);
+        });
+        health.checking = false; health.checkedAt = Date.now();
+        try { localStorage.setItem(HEALTH_KEY, JSON.stringify(Object.fromEntries(SERVERS.map(server => [server.id, health.servers[server.id].history])))); } catch (_) {}
+        updateStatusLed();
+        if (getRoute().page === 'status') render();
+        if (announce) showToast('Status refreshed.');
+      }
+      function overallStatus() {
+        const list = SERVERS.map(server => health.servers[server.id].status);
+        if (list.every(value => value === 'checking')) return 'checking';
+        const up = list.filter(value => value === 'ok' || value === 'slow').length;
+        if (up === 0) return 'down';
+        if (health.servers.primary.status === 'ok') return 'ok';
+        return 'warn';
+      }
+      const OVERALL_COPY = {
+        checking: ['Checking servers…', 'Running a quick health check.'],
+        ok:   ['All systems operational', 'The primary server is healthy and handling requests.'],
+        warn: ['Running on backup', 'The primary server is struggling, so traffic is being served by another server.'],
+        down: ['Service unavailable', 'None of the servers are responding right now. We keep retrying automatically.']
+      };
+      function updateStatusLed() {
+        const led = $('#statusLed'); if (!led) return;
+        const overall = overallStatus();
+        led.dataset.state = overall;
+        led.title = OVERALL_COPY[overall][0];
+      }
+      function uptimeOf(history) {
+        if (!history.length) return null;
+        return Math.round(history.filter(value => value !== 'down').length / history.length * 1000) / 10;
+      }
+      function renderStatus() {
+        const overall = overallStatus();
+        const [title, text] = OVERALL_COPY[overall];
+        const STATUS_LABEL = { checking: 'Checking', ok: 'Operational', slow: 'Degraded', down: 'Offline' };
+        const roleIcon = { primary: '<path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.2 6L12 16.7 6.6 19.6l1.2-6L3.3 9.4l6.1-.8L12 3Z"/>', fallback: '<path d="M4 7h11l-3-3M20 17H9l3 3"/>', mirror: '<rect x="4" y="5" width="12" height="12" rx="2.5"/><path d="M8 21h10a2 2 0 0 0 2-2V9"/>' };
+        const checkedText = health.checkedAt ? `Last checked ${new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(new Date(health.checkedAt))}` : 'Waiting for the first check';
+        const cards = SERVERS.map(server => {
+          const entry = health.servers[server.id];
+          const busy = health.checking && entry.status === 'checking';
+          const inUse = entry.status !== 'down' && state.apiDomain === server.domain;
+          const meter = entry.ms == null ? 0 : Math.max(6, Math.min(100, Math.round(entry.ms / 20)));
+          const uptime = uptimeOf(entry.history);
+          const ticks = Array.from({ length: HISTORY_LEN }, (_, index) => { const value = entry.history[entry.history.length - HISTORY_LEN + index]; return `<i class="tick ${value || 'empty'}"></i>`; }).join('');
+          return `<article class="status-card" data-state="${entry.status}">
+            <div class="status-card-head">
+              <span class="status-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${roleIcon[server.id]}</svg></span>
+              <div class="status-card-title"><h3>${server.label}</h3><p>${server.desc}</p></div>
+              <span class="status-pill ${entry.status}${busy ? ' busy' : ''}"><i></i>${STATUS_LABEL[entry.status]}</span>
+            </div>
+            <div class="status-metrics">
+              <div class="metric"><span>Latency</span><strong>${entry.ms == null ? '—' : entry.ms + ' ms'}</strong></div>
+              <div class="metric"><span>Uptime</span><strong>${uptime == null ? '—' : uptime + '%'}</strong></div>
+              <div class="metric"><span>Role</span><strong>${inUse ? 'In use' : 'Standby'}</strong></div>
+            </div>
+            <div class="meter" aria-hidden="true"><span style="width:${meter}%"></span></div>
+            <div class="ticks-label"><span>Last ${HISTORY_LEN} checks</span><span>Now</span></div>
+            <div class="ticks" aria-label="Recent check history">${ticks}</div>
+          </article>`;
+        }).join('');
+        $('#appContent').innerHTML = `<div class="eyebrow"><span class="eyebrow-line"></span>System health</div>
+          <div class="page-heading"><div><h1>Status</h1><p class="heading-sub">Live availability of the servers behind your streams.</p></div></div>
+          <section class="status-banner" data-state="${overall}">
+            <span class="status-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${overall === 'ok' ? '<path d="m5 12.5 4.5 4.5L19 7.5"/>' : overall === 'down' ? '<path d="M6 6l12 12M18 6 6 18"/>' : overall === 'warn' ? '<path d="M12 8v5m0 3.5h.01"/><path d="M10.3 4.6 2.8 17.5A2 2 0 0 0 4.5 20.5h15a2 2 0 0 0 1.7-3L13.7 4.6a2 2 0 0 0-3.4 0Z"/>' : '<path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5"/>'}</svg></span>
+            <div class="status-banner-text"><h2>${title}</h2><p>${text}</p></div>
+            <div class="status-banner-actions"><span class="status-checked">${checkedText}</span><button class="btn-secondary recheck${health.checking ? ' loading' : ''}" type="button" data-action="recheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5"/></svg>${health.checking ? 'Checking…' : 'Check again'}</button></div>
+          </section>
+          <div class="section-head"><h2 class="section-title"><span class="mini-mark"></span>Servers</h2><span class="section-link" style="pointer-events:none">Auto-refreshes every 30s</span></div>
+          <div class="status-grid">${cards}</div>
+          <div class="footer-note"><span>Degraded means a response took longer than ${SLOW_MS / 1000} seconds.</span><span>STRENZO · Build by AziF &amp; Yoru</span></div>`;
+      }
       function getInitialPlayerDomainIndex(source) {
         if (source?.url) {
           try { const hostname = new URL(source.url).hostname; const index = API_DOMAINS.findIndex(domain => new URL(domain).hostname === hostname); if (index >= 0) return index; }
@@ -1099,7 +1254,7 @@
       function updateActiveNav(route) {
         document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.route === route.page));
         document.querySelectorAll('.category-link').forEach(link => link.classList.toggle('active', route.page === 'category' && link.dataset.category === route.category));
-        const breadcrumb = route.page === 'watch' ? 'Watch' : route.page === 'category' ? titleCase(route.category) : ({ home: 'Discover', live: 'Live now', favorites: 'Favorites' }[route.page] || 'Discover');
+        const breadcrumb = route.page === 'watch' ? 'Watch' : route.page === 'category' ? titleCase(route.category) : ({ home: 'Discover', live: 'Live now', favorites: 'Favorites', status: 'Status' }[route.page] || 'Discover');
         $('#breadcrumbTitle').textContent = breadcrumb;
       }
       function render() {
@@ -1107,6 +1262,7 @@
         renderSidebar();
         updateActiveNav(route);
         if (route.page === 'watch') renderWatch(route);
+        else if (route.page === 'status') renderStatus();
         else renderBrowse(route);
       }
       function toggleFavorite(key) {
@@ -1130,6 +1286,7 @@
           const started = Date.now();
           loadStreams(true).finally(() => setTimeout(() => button.classList.remove('loading'), Math.max(0, 700 - (Date.now() - started))));
         }
+        if (type === 'recheck') checkHealth(true);
         if (type === 'clear-search') { state.query = ''; $('#searchInput').value = ''; }
         if (type === 'back') { event.preventDefault(); if (history.length > 1) history.back(); else go('#home'); }
         if (type === 'source') {
@@ -1148,14 +1305,14 @@
           showToast(`Trying ${API_DOMAINS[state.playerDomainIndex].replace(/^https:\/\//, '')}`);
         }
       });
-      $('#searchInput').addEventListener('input', event => { state.query = event.target.value; if (getRoute().page === 'watch') go('#home'); else render(); });
+      $('#searchInput').addEventListener('input', event => { state.query = event.target.value; if (['watch', 'status'].includes(getRoute().page)) go('#home'); else render(); });
       $('#refreshButton').addEventListener('click', () => loadStreams(true));
       $('#menuToggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
       $('#sidebar').addEventListener('click', event => { if (event.target.closest('a')) closeSidebar(); });
       document.addEventListener('click', event => {
         if (window.innerWidth <= 700 && !event.target.closest('#sidebar') && !event.target.closest('#menuToggle')) closeSidebar();
       });
-      window.addEventListener('hashchange', () => { state.playerKey = null; render(); });
+      window.addEventListener('hashchange', () => { state.playerKey = null; if (getRoute().page === 'status') hideNetModal(); render(); if (getRoute().page === 'status' && Date.now() - (health.checkedAt || 0) > 20000) checkHealth(); });
       window.addEventListener('online', () => { showToast('Connection restored. Refreshing streams…'); loadStreams(true); });
       window.addEventListener('offline', () => showNetModal('offline', state.streams.length > 0));
 
@@ -1174,6 +1331,9 @@
       if (categoryCache?.data?.categories && Array.isArray(categoryCache.data.categories)) state.categories = categoryCache.data.categories;
       render();
       loadStreams(false);
+      setTimeout(() => checkHealth(), 1200);
+      setInterval(() => { if (!document.hidden && getRoute().page === 'status') checkHealth(); }, 30000);
+      setInterval(() => { if (!document.hidden && getRoute().page !== 'status') checkHealth(); }, 120000);
       setInterval(() => {
         const age = state.lastUpdated ? Date.now() - state.lastUpdated : Infinity;
         if (!document.hidden && !state.loading && age >= CACHE_TTL) loadStreams(true);
