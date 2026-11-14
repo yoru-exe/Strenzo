@@ -490,12 +490,82 @@
     .status-dot { animation: pulse 2.4s ease-in-out infinite; }
     @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(53,214,160,.45); } 50% { box-shadow: 0 0 0 5px rgba(53,214,160,0); } }
 
-    /* PWA install button */
-    .install-btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 40px; margin-bottom: 10px; color: #06150f; background: linear-gradient(135deg, #5ce9b6, #2ccc96); border: 0; border-radius: 11px; cursor: pointer; font-size: 12px; font-weight: 850; box-shadow: 0 8px 22px rgba(53,214,160,.14); transition: transform .18s var(--ease), box-shadow .18s ease; }
-    .install-btn[hidden] { display: none; }
-    .install-btn svg { width: 15px; height: 15px; }
-    .install-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(53,214,160,.24); }
-    .install-btn:active { transform: scale(.97); }
+
+
+    /* Offline / connection popup */
+    .net-modal { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 20px; }
+    .net-modal[hidden] { display: none; }
+    .net-backdrop { position: absolute; inset: 0; background: rgba(2,5,7,.72); backdrop-filter: blur(8px) saturate(120%); animation: fadeIn .25s ease both; }
+    .net-card {
+      position: relative; width: min(440px, 100%); padding: 34px 30px 26px; text-align: center; overflow: hidden;
+      background: radial-gradient(ellipse at 50% -10%, rgba(255,98,110,.13), transparent 58%), linear-gradient(155deg, #12202a, #0b141a);
+      border: 1px solid rgba(183,216,207,.15); border-radius: 24px;
+      box-shadow: 0 40px 100px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
+      animation: popIn .38s var(--ease) both;
+    }
+    .net-modal[data-kind="api"] .net-card { background: radial-gradient(ellipse at 50% -10%, rgba(255,178,84,.12), transparent 58%), linear-gradient(155deg, #12202a, #0b141a); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn { from { opacity: 0; transform: translateY(16px) scale(.96); } to { opacity: 1; transform: none; } }
+    .net-close { position: absolute; top: 14px; right: 14px; display: grid; place-items: center; width: 32px; height: 32px; color: #8ea09c; background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; transition: .18s ease; }
+    .net-close:hover { color: #fff; background: rgba(255,255,255,.09); }
+    .net-close svg { width: 14px; height: 14px; }
+    .net-icon { position: relative; display: grid; place-items: center; width: 92px; height: 92px; margin: 0 auto 22px; color: #ff8b92; }
+    .net-modal[data-kind="api"] .net-icon { color: #ffb454; }
+    .net-icon::before, .net-icon::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid currentColor; opacity: 0; animation: ring 2.8s ease-out infinite; }
+    .net-icon::after { animation-delay: 1.4s; }
+    @keyframes ring { 0% { transform: scale(.62); opacity: .5; } 100% { transform: scale(1.25); opacity: 0; } }
+    .net-icon-core { display: grid; place-items: center; width: 68px; height: 68px; background: color-mix(in srgb, currentColor 12%, #0d171d); border: 1px solid color-mix(in srgb, currentColor 32%, transparent); border-radius: 22px; box-shadow: 0 0 40px color-mix(in srgb, currentColor 18%, transparent); }
+    .net-icon-core svg { width: 32px; height: 32px; }
+    .net-icon-core [data-icon] { display: none; }
+    .net-modal[data-kind="offline"] [data-icon="offline"], .net-modal[data-kind="api"] [data-icon="api"] { display: block; animation: wobble 3s ease-in-out infinite; }
+    @keyframes wobble { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+    .net-card h3 { margin: 0; font-size: 22px; font-weight: 820; letter-spacing: -.045em; }
+    .net-card p { max-width: 340px; margin: 10px auto 0; color: #90a09e; font-size: 13px; line-height: 1.65; text-wrap: pretty; }
+    .net-status { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px 0 24px; }
+    .net-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; color: #a9b8b5; background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 999px; font-size: 10px; font-weight: 750; letter-spacing: .02em; }
+    .net-pill svg { width: 13px; height: 13px; }
+    .net-pill i { width: 6px; height: 6px; border-radius: 50%; background: #ff626e; box-shadow: 0 0 8px rgba(255,98,110,.7); }
+    .net-pill.ok i { background: #48e4ac; box-shadow: 0 0 8px rgba(53,214,160,.6); }
+    .net-pill.warn i { background: #ffb454; box-shadow: 0 0 8px rgba(255,180,84,.6); }
+    .net-actions { display: grid; gap: 10px; }
+    .net-actions .btn-primary, .net-actions .btn-secondary { width: 100%; min-height: 48px; font-size: 13px; }
+    .net-actions .btn-secondary[hidden] { display: none; }
+    .net-retry svg { transition: transform .5s var(--ease); }
+    .net-retry.loading { pointer-events: none; opacity: .85; }
+    .net-retry.loading svg { animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .net-foot { margin-top: 16px; color: #62736f; font-size: 10px; }
+    @media (max-width: 700px) { .net-modal { align-items: end; padding: 12px; } .net-card { padding: 30px 22px 22px; border-radius: 22px; } }
+
+
+    /* Audit fixes */
+    .watch-heading > div:first-child { flex: 1 1 auto; min-width: 0; }
+    .watch-heading h1 { letter-spacing: -.04em; word-spacing: .05em; text-wrap: balance; }
+    .watch-heading .heading-actions { flex: 0 0 auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .card-league { margin-bottom: 13px; }
+    @media (max-width: 700px) { .watch-heading .heading-actions { flex-wrap: wrap; } }
+    .player-frame { min-height: 0; }
+    .hero-art span { inset: 26%; line-height: 1; font-size: clamp(44px, 6vw, 84px); }
+    .watch-layout > * { min-width: 0; }
+    .watch-heading h1 { font-size: clamp(25px, 3vw, 36px); line-height: 1.12; }
+    .heading-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .live-pill.setup { color: #a6e8cf; background: rgba(53,214,160,.08); border-color: rgba(53,214,160,.17); }
+    .live-pill.setup::before { background: var(--lime); box-shadow: 0 0 10px rgba(53,214,160,.6); }
+    .fav-btn { min-height: 34px; padding: 0 14px; border-radius: 999px; font-size: 11px; }
+    .fav-btn.saved { color: #5de6b4; border-color: rgba(53,214,160,.3); background: rgba(53,214,160,.08); }
+    .brand-caption { white-space: nowrap; }
+    @media (max-width: 900px) {
+      .watch-layout { grid-template-columns: minmax(0, 1fr); }
+      .brand-caption { font-size: 7.5px; letter-spacing: .13em; }
+      .brand-name { letter-spacing: .1em; }
+    }
+    @media (max-width: 700px) {
+      .watch-heading .heading-actions { justify-content: flex-start; }
+    }
+    @media (max-width: 380px) {
+      .mobile-brand { font-size: 0; gap: 0; }
+      .topbar { gap: 10px; }
+    }
 
     /* Mobile drawer backdrop */
     .sidebar-backdrop { position: fixed; inset: 0; z-index: 25; background: rgba(2,5,7,.62); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
@@ -566,7 +636,7 @@
     .card-fav.saved { background: rgba(53,214,160,.16); }
     .card-info { display: flex; flex: 1; flex-direction: column; }
     .card-footer { margin-top: auto; }
-    .card-info .card-league { margin-bottom: 0; }
+    .card-info .card-league { margin-bottom: 14px; }
     .card-title { transition: color .18s ease; }
     .stream-card:hover .card-title { color: #fff; }
     .card-category { color: #6fd9b3; }
@@ -642,14 +712,6 @@
         <a class="category-link" href="#basketball"><span class="category-dot">🏀</span>Basketball</a>
         <a class="category-link" href="#hockey"><span class="category-dot">🏒</span>Hockey</a>
       </nav>
-      <div class="sidebar-bottom">
-        <button class="install-btn" id="installButton" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button>
-        <div class="connection-card">
-          <div class="connection-title"><span class="status-dot"></span>API connection</div>
-          <div class="connection-host" id="connectionHost">Checking available domains…</div>
-          <div class="connection-note">Automatic failover is enabled across 3 domains.</div>
-        </div>
-      </div>
     </aside>
     <div class="sidebar-backdrop" aria-hidden="true"></div>
 
@@ -668,6 +730,28 @@
       <main class="content" id="appContent" aria-live="polite">
         <div class="loading-grid"><div class="skeleton"><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line"></div></div></div><div class="skeleton"><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line"></div></div></div><div class="skeleton"><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line"></div></div></div></div>
       </main>
+    </div>
+  </div>
+  <div class="net-modal" id="netModal" data-kind="offline" role="alertdialog" aria-modal="true" aria-labelledby="netTitle" aria-describedby="netDesc" hidden>
+    <div class="net-backdrop" data-action="net-dismiss"></div>
+    <div class="net-card">
+      <button class="net-close" type="button" data-action="net-dismiss" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg></button>
+      <div class="net-icon"><div class="net-icon-core">
+        <svg data-icon="offline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15 15 0 0 1 4.2-2.6M22 8.8A15 15 0 0 0 11 5.1M5.3 12.6a10 10 0 0 1 3.3-2M18.7 12.6a10 10 0 0 0-3.4-2.1M8.7 16.2a5 5 0 0 1 6.6 0"/><circle cx="12" cy="19.5" r=".9" fill="currentColor"/><path d="M3 3l18 18"/></svg>
+        <svg data-icon="api" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6.5" rx="2"/><rect x="3" y="13.5" width="18" height="6.5" rx="2"/><path d="M7 7.25h.01M7 16.75h.01M12 10.5v3"/></svg>
+      </div></div>
+      <h3 id="netTitle">You're offline</h3>
+      <p id="netDesc">Check your Wi-Fi or mobile data and try again.</p>
+      <div class="net-status">
+        <span class="net-pill" id="netPillNetwork"><i></i><span>Network</span></span>
+        <span class="net-pill" id="netPillServer"><i></i><span>Stream server</span></span>
+        <span class="net-pill" id="netPillCache"><i></i><span>Saved streams</span></span>
+      </div>
+      <div class="net-actions">
+        <button class="btn-primary net-retry" id="netRetry" type="button" data-action="net-retry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5"/></svg><span>Try again</span></button>
+        <button class="btn-secondary" id="netCached" type="button" data-action="net-dismiss" hidden>View saved streams</button>
+      </div>
+      <div class="net-foot">We'll reconnect automatically as soon as you're back online.</div>
     </div>
   </div>
   <div class="toast" id="toast" role="status"></div>
@@ -758,6 +842,35 @@
         if (hours > 0) return `In ${hours}h ${minutes}m`;
         return `In ${Math.max(1, minutes)}m`;
       }
+
+      // ── Connection popup ──
+      let netModalOpen = false, netLastFocus = null;
+      function showNetModal(kind, hasCached) {
+        const modal = $('#netModal');
+        const offline = kind === 'offline';
+        modal.dataset.kind = offline ? 'offline' : 'api';
+        $('#netTitle').textContent = offline ? "You're offline" : "Can't reach the stream server";
+        $('#netDesc').textContent = offline
+          ? 'Check your Wi-Fi or mobile data. STRENZO needs a connection to load live events.'
+          : "The streaming service isn't responding right now. This is usually temporary, so try again in a moment.";
+        const setPill = (id, text, tone) => { const pill = $(id); pill.className = 'net-pill ' + tone; pill.querySelector('span').textContent = text; };
+        setPill('#netPillNetwork', offline ? 'Network offline' : 'Network connected', offline ? '' : 'ok');
+        setPill('#netPillServer', offline ? 'Server unknown' : 'Server unreachable', offline ? 'warn' : '');
+        const cachePill = $('#netPillCache');
+        cachePill.className = 'net-pill ' + (hasCached ? 'ok' : '');
+        cachePill.querySelector('span').textContent = hasCached ? 'Saved streams available' : 'No saved streams';
+        $('#netCached').hidden = !hasCached;
+        const retry = $('#netRetry');
+        retry.classList.remove('loading'); retry.querySelector('span').textContent = 'Try again';
+        if (!netModalOpen) { netLastFocus = document.activeElement; }
+        netModalOpen = true; modal.hidden = false;
+        setTimeout(() => retry.focus({ preventScroll: true }), 30);
+      }
+      function hideNetModal() {
+        if (!netModalOpen) return;
+        netModalOpen = false; $('#netModal').hidden = true;
+        if (netLastFocus && netLastFocus.focus) netLastFocus.focus({ preventScroll: true });
+      }
       function showToast(message) {
         const toast = $('#toast');
         toast.textContent = message;
@@ -778,17 +891,12 @@
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
             state.apiDomain = domain;
-            updateConnectionLabel();
             return data;
           } catch (error) {
             lastError = error;
           } finally { clearTimeout(timer); }
         }
         throw lastError || new Error('All API domains are unavailable');
-      }
-      function updateConnectionLabel() {
-        const node = $('#connectionHost');
-        if (node) node.textContent = state.apiDomain.replace(/^https:\/\//, '');
       }
       async function loadStreams(force = false) {
         const cached = readCache(STORAGE.streams, CACHE_TTL);
@@ -808,6 +916,7 @@
           state.streams = payload.streams;
           state.lastUpdated = Date.now();
           state.stale = false;
+          hideNetModal();
           writeCache(STORAGE.streams, payload);
           await loadCategories(false);
         } catch (error) {
@@ -815,10 +924,10 @@
             state.streams = staleCache.data.streams;
             state.lastUpdated = staleCache.savedAt || null;
             state.stale = true;
-            showToast('Could not reach the API. Showing your cached streams.');
+            showNetModal(navigator.onLine ? 'api' : 'offline', true);
           } else {
             state.streams = [];
-            showToast('Unable to reach the streaming API. Check your connection and try again.');
+            showNetModal(navigator.onLine ? 'api' : 'offline', false);
           }
           console.warn('StreamFree API error:', error);
         } finally {
@@ -848,7 +957,6 @@
         nav.innerHTML = state.categories.map(category => `<a class="category-link" data-category="${esc(category)}" href="#${esc(category)}"><span class="category-dot">${categoryIcon(category)}</span>${esc(titleCase(category))}</a>`).join('');
         $('#liveNavCount').textContent = state.streams.filter(isLive).length;
         $('#favNavCount').textContent = state.favorites.length;
-        updateConnectionLabel();
       }
       function streamCard(stream) {
         const key = esc(stream.stream_key || '');
@@ -933,7 +1041,7 @@
           if (state.query.trim()) { titleText = 'No matches'; message = 'Try a different team, league, or sport name.'; button = 'Clear search'; hash = '#home'; }
           html += emptyState(titleText, message, button, hash, state.query.trim() ? 'clear-search' : '');
         }
-        html += `<div class="footer-note"><span>${state.stale ? 'Showing cached data · ' : 'Data refreshes periodically · '}${state.lastUpdated ? `Updated ${new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date(state.lastUpdated))}` : 'Waiting for API response'}</span><span>STRENZO · Powered by StreamFree API · <a href="https://strmfree.pk/" target="_blank" rel="noopener noreferrer">strmfree.pk</a></span></div>`;
+        html += `<div class="footer-note"><span>${state.stale ? 'Showing cached data · ' : 'Data refreshes periodically · '}${state.lastUpdated ? `Updated ${new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date(state.lastUpdated))}` : 'Waiting for API response'}</span><span>STRENZO · Build by AziF &amp; Yoru</span></div>`;
         $('#appContent').innerHTML = html;
       }
       function renderWatch(route) {
@@ -957,7 +1065,9 @@
           ? `<iframe src="${esc(playerUrl)}" title="${esc(stream.name)} live stream" allow="fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`
           : `<div class="player-placeholder"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-9Z"/><path d="m10 9 5 3-5 3V9Z" fill="currentColor" stroke="none"/></svg></div><h3>${sources.length ? 'No playable source URL' : 'Waiting for a source'}</h3><p>${sources.length ? 'The API returned sources, but none had a valid StreamFree embed URL.' : 'This event is listed, but the broadcaster has not configured a stream source yet.'}</p></div>`;
         $('#appContent').innerHTML = `<a class="back-link" href="#home" data-action="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m6-6-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</a>
-          ${pageHeading('Now watching', esc(titleCase(category)), `${esc(stream.league || 'Live sports')} · ${esc(formatEventTime(stream.match_timestamp))}`, live ? 'LIVE' : 'FEED SETUP')}
+          <div class="eyebrow"><span class="eyebrow-line"></span>Now watching · ${esc(titleCase(category))}</div>
+          <div class="page-heading watch-heading"><div><h1>${esc(stream.name || 'Untitled event')}</h1><p class="heading-sub">${esc(stream.league || 'Live sports')} · ${esc(formatEventTime(stream.match_timestamp))}</p></div>
+            <div class="heading-actions"><span class="live-pill${live ? '' : ' setup'}">${live ? 'Live' : 'Feed setup'}</span><button class="btn-secondary fav-btn${isFavorite ? ' saved' : ''}" data-action="favorite" data-key="${esc(stream.stream_key)}">${isFavorite ? '★ Saved' : '☆ Add to favorites'}</button></div></div>
           <div class="watch-layout">
             <div>
               <section class="player-panel">
@@ -965,7 +1075,6 @@
                 <div class="player-frame">${player}</div>
                 <div class="player-controls"><div class="source-list">${sourceButtons}</div><button class="host-switch" data-action="next-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h13l-3-3m6 13H7l3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7a5 5 0 0 1 0 10" stroke-linecap="round"/></svg>Try backup domain</button></div>
               </section>
-              <div class="watch-title-row"><div><h2>${esc(stream.name || 'Untitled event')}</h2><p>${esc(stream.league || 'Live sports event')} · ${esc(titleCase(category))}</p></div><button class="btn-secondary" data-action="favorite" data-key="${esc(stream.stream_key)}">${isFavorite ? '★ Saved' : '☆ Add to favorites'}</button></div>
             </div>
             <aside class="watch-side-card"><h3 class="side-card-title">Stream details</h3>
               <div class="info-row"><span>Event</span><span>${esc(stream.name || '—')}</span></div>
@@ -977,7 +1086,7 @@
               <div class="watch-note">Having playback trouble? Switch to another source or try a backup domain. Some feeds only become playable shortly before kickoff.</div>
             </aside>
           </div>
-          <div class="footer-note"><span>Playback is delivered through StreamFree embeds. Use the source selector if a feed is unavailable.</span><span><a href="https://strmfree.pk/" target="_blank" rel="noopener noreferrer">StreamFree API</a></span></div>`;
+          <div class="footer-note"><span>Feed not loading? Try another source or a backup domain from the player controls.</span><span>STRENZO · Build by AziF &amp; Yoru</span></div>`;
       }
       function getInitialPlayerDomainIndex(source) {
         if (source?.url) {
@@ -1008,11 +1117,19 @@
       }
       function closeSidebar() { $('#sidebar').classList.remove('open'); }
 
+      document.addEventListener('keydown', event => { if (event.key === 'Escape') hideNetModal(); });
       document.addEventListener('click', event => {
         const action = event.target.closest('[data-action]');
         if (!action) return;
         const type = action.dataset.action;
         if (type === 'favorite') { event.preventDefault(); toggleFavorite(action.dataset.key); }
+        if (type === 'net-dismiss') hideNetModal();
+        if (type === 'net-retry') {
+          const button = $('#netRetry');
+          button.classList.add('loading'); button.querySelector('span').textContent = 'Retrying…';
+          const started = Date.now();
+          loadStreams(true).finally(() => setTimeout(() => button.classList.remove('loading'), Math.max(0, 700 - (Date.now() - started))));
+        }
         if (type === 'clear-search') { state.query = ''; $('#searchInput').value = ''; }
         if (type === 'back') { event.preventDefault(); if (history.length > 1) history.back(); else go('#home'); }
         if (type === 'source') {
@@ -1040,28 +1157,12 @@
       });
       window.addEventListener('hashchange', () => { state.playerKey = null; render(); });
       window.addEventListener('online', () => { showToast('Connection restored. Refreshing streams…'); loadStreams(true); });
-      window.addEventListener('offline', () => showToast('You are offline. Showing saved streams.'));
+      window.addEventListener('offline', () => showNetModal('offline', state.streams.length > 0));
 
-      // PWA: service worker + install button (service workers need https:// or localhost).
-      let installPrompt = null;
-      const installButton = $('#installButton');
-      const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+      // PWA: service worker (needs https:// or localhost).
       if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
         window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(error => console.warn('Service worker registration failed.', error)));
       }
-      window.addEventListener('beforeinstallprompt', event => {
-        event.preventDefault();
-        installPrompt = event;
-        if (!isStandalone()) installButton.hidden = false;
-      });
-      installButton.addEventListener('click', async () => {
-        if (!installPrompt) return;
-        installPrompt.prompt();
-        await installPrompt.userChoice.catch(() => {});
-        installPrompt = null;
-        installButton.hidden = true;
-      });
-      window.addEventListener('appinstalled', () => { installButton.hidden = true; showToast('STRENZO installed.'); });
 
       // Render cached content immediately, then refresh only when the cache has expired.
       const initialCache = readCache(STORAGE.streams, CACHE_TTL);
