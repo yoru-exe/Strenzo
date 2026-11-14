@@ -1,0 +1,23 @@
+{
+  "name": "STRENZO — Live Sports",
+  "short_name": "STRENZO",
+  "description": "Live sports streams, all in one place.",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070b10",
+  "theme_color": "#070b10",
+  "categories": ["sports", "entertainment"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Live now", "short_name": "Live", "url": "./index.html#live", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "My favorites", "short_name": "Favorites", "url": "./index.html#favorites", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+  ]
+}

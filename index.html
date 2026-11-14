@@ -3,8 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#080c11" />
+  <meta name="theme-color" content="#070b10" />
   <meta name="description" content="STRENZO brings live sports streams together in one place." />
+  <meta property="og:title" content="STRENZO — Live Sports" />
+  <meta property="og:description" content="Live sports streams, all in one place." />
+  <meta property="og:image" content="icon-512.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="STRENZO" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
   <title>STRENZO — Live Sports</title>
   <style>
     :root {
@@ -443,13 +455,178 @@
       .card-info { padding: 12px; }
     }
 
+    /* ───────── STRENZO polish pass ───────── */
+    :root { --ease: cubic-bezier(.22,.8,.26,1); }
+
+    /* Logo mark: the artwork supplies its own tile, so drop the CSS background. */
+    .brand-mark, .mobile-brand .brand-mark {
+      background: none; box-shadow: none; padding: 0; overflow: visible;
+      width: 42px; height: 42px; border-radius: 12px; flex: 0 0 auto;
+    }
+    .brand-mark img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 16px rgba(53,214,160,.28)); transition: transform .3s var(--ease), filter .3s ease; }
+    .brand:hover .brand-mark img { transform: rotate(-4deg) scale(1.05); filter: drop-shadow(0 8px 22px rgba(53,214,160,.42)); }
+    .mobile-brand .brand-mark { width: 34px; height: 34px; }
+    .brand-name { font-size: 17px; line-height: 1.1; }
+    .brand-name span { display: inline; }
+    .brand-caption { display: block; margin-top: 4px; }
+
+    /* Sidebar */
+    .sidebar { overflow: hidden; }
+    .category-nav { flex: 1 1 auto; min-height: 0; align-content: start; padding-right: 2px; }
+    @media (min-width: 701px) { .menu-toggle, .mobile-brand { display: none; } }
+    .sidebar-bottom { flex: 0 0 auto; }
+    .nav-link { position: relative; }
+    .nav-link .nav-count {
+      min-width: 24px; padding: 3px 7px; text-align: center; border-radius: 999px;
+      color: #9db0ac; background: rgba(255,255,255,.05); font-weight: 750;
+    }
+    .nav-link.active .nav-count { color: #06150f; background: #42dca8; }
+    .category-link { position: relative; transition: background .18s ease, color .18s ease; }
+    .category-link.active { box-shadow: inset 2px 0 0 rgba(53,214,160,.8); color: #5de6b4; background: rgba(53,214,160,.07); }
+    .category-link:hover .category-dot, .category-link.active .category-dot { background: #1d3732; }
+    .category-dot { transition: background .18s ease, transform .18s var(--ease); }
+    .category-link:hover .category-dot { transform: scale(1.08); }
+    .connection-title { gap: 8px; }
+    .status-dot { animation: pulse 2.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(53,214,160,.45); } 50% { box-shadow: 0 0 0 5px rgba(53,214,160,0); } }
+
+    /* PWA install button */
+    .install-btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 40px; margin-bottom: 10px; color: #06150f; background: linear-gradient(135deg, #5ce9b6, #2ccc96); border: 0; border-radius: 11px; cursor: pointer; font-size: 12px; font-weight: 850; box-shadow: 0 8px 22px rgba(53,214,160,.14); transition: transform .18s var(--ease), box-shadow .18s ease; }
+    .install-btn[hidden] { display: none; }
+    .install-btn svg { width: 15px; height: 15px; }
+    .install-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(53,214,160,.24); }
+    .install-btn:active { transform: scale(.97); }
+
+    /* Mobile drawer backdrop */
+    .sidebar-backdrop { position: fixed; inset: 0; z-index: 25; background: rgba(2,5,7,.62); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+    @media (min-width: 701px) { .sidebar-backdrop { display: none; } }
+
+    /* Top bar */
+    .topbar { transition: background .2s ease; }
+    .search-wrap svg { transition: color .18s ease; }
+    .search-wrap:focus-within svg { color: #53dfad; }
+    .search-input::-webkit-search-cancel-button { filter: invert(.6); cursor: pointer; }
+    .icon-button { transition: color .18s ease, border-color .18s ease, background .18s ease, transform .18s var(--ease); }
+    .icon-button:hover { background: rgba(53,214,160,.08); }
+    .icon-button:active { transform: scale(.94); }
+    .refresh-button:active svg { transform: rotate(180deg); transition: transform .4s var(--ease); }
+
+    /* Headings */
+    .page-heading { margin-bottom: 28px; }
+    h1 { text-wrap: balance; }
+    .heading-sub { max-width: 560px; text-wrap: pretty; }
+    .eyebrow-line { width: 26px; background: linear-gradient(90deg, #53dfad, transparent); opacity: 1; }
+    .live-pill { font-variant-numeric: tabular-nums; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 7px 12px 7px 9px; color: #93a6a1; background: rgba(255,255,255,.035); border: 1px solid var(--line); border-radius: 999px; font-size: 11px; font-weight: 750; transition: .18s ease; }
+    .back-link svg { width: 14px; height: 14px; transition: transform .18s var(--ease); }
+    .back-link:hover { color: #53dfad; border-color: rgba(53,214,160,.28); }
+    .back-link:hover svg { transform: translateX(-3px); }
+
+    /* Hero */
+    .hero { isolation: isolate; }
+    .hero::after {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: .5;
+      background-image: linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(ellipse at 80% 40%, #000 0%, transparent 70%);
+      mask-image: radial-gradient(ellipse at 80% 40%, #000 0%, transparent 70%);
+    }
+    .hero-content { text-wrap: balance; }
+    .hero h2 { text-shadow: 0 2px 30px rgba(0,0,0,.35); }
+    .hero-desc { font-size: 13px; }
+    .hero-art span { animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .btn-primary, .btn-secondary { font-size: 12px; }
+    .btn-primary:active, .btn-secondary:active { transform: scale(.97); }
+    .btn-secondary { backdrop-filter: blur(8px); }
+
+    /* Section header + chips */
+    .section-title .mini-mark { background: linear-gradient(180deg, #5ce9b6, #25b98a); }
+    .section-link { transition: color .18s ease; }
+    .section-link svg { transition: transform .18s var(--ease); }
+    .section-link:hover svg { transform: translateX(3px); }
+    .filter-row { margin-inline: -2px; padding-inline: 2px; -webkit-mask-image: linear-gradient(90deg, #000 94%, transparent); mask-image: linear-gradient(90deg, #000 94%, transparent); }
+    .filter-chip { display: inline-flex; align-items: center; font-size: 11px; transition: .18s var(--ease); }
+    .filter-chip:hover { transform: translateY(-1px); }
+
+    /* Cards */
+    .stream-card { display: flex; flex-direction: column; animation: rise .5s var(--ease) both; }
+    .stream-card:nth-child(2) { animation-delay: .04s; } .stream-card:nth-child(3) { animation-delay: .08s; }
+    .stream-card:nth-child(4) { animation-delay: .12s; } .stream-card:nth-child(5) { animation-delay: .16s; }
+    .stream-card:nth-child(6) { animation-delay: .2s; } .stream-card:nth-child(n+7) { animation-delay: .24s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .card-thumb::before { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 50% 120%, rgba(53,214,160,.14), transparent 60%); opacity: 0; transition: opacity .3s ease; }
+    .stream-card:hover .card-thumb::before { opacity: 1; }
+    .card-status { font-size: 9px; }
+    .card-status:not(.waiting)::before { animation: blink 1.6s ease-in-out infinite; box-shadow: 0 0 8px rgba(255,98,110,.7); }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+    .card-fav { transition: .18s var(--ease); }
+    .card-fav:hover { transform: scale(1.08); }
+    .card-fav:active { transform: scale(.92); }
+    .card-fav.saved { background: rgba(53,214,160,.16); }
+    .card-info { display: flex; flex: 1; flex-direction: column; }
+    .card-footer { margin-top: auto; }
+    .card-info .card-league { margin-bottom: 0; }
+    .card-title { transition: color .18s ease; }
+    .stream-card:hover .card-title { color: #fff; }
+    .card-category { color: #6fd9b3; }
+    .card-sources { font-variant-numeric: tabular-nums; }
+    .card-time, .card-league, .card-sources { font-size: 10px; }
+    .watch-link svg { transition: transform .18s var(--ease); }
+    .stream-card:hover .watch-link svg { transform: translateX(3px); }
+
+    /* Empty states */
+    .empty-state { background: radial-gradient(ellipse at 50% 0%, rgba(53,214,160,.05), transparent 65%); }
+    .empty-state .btn-primary { display: inline-flex; }
+
+    /* Player + details */
+    .player-panel { transition: box-shadow .3s ease; }
+    .player-topline-left { font-size: 10px; }
+    .source-chip { font-size: 10px; transition: .18s var(--ease); }
+    .source-chip:hover { transform: translateY(-1px); }
+    .host-switch { padding: 6px 10px; border-radius: 8px; font-size: 10px; transition: .18s ease; }
+    .host-switch:hover { background: rgba(53,214,160,.08); }
+    .watch-title-row h2 { text-wrap: balance; }
+    .watch-title-row .btn-secondary { flex: 0 0 auto; }
+    .info-row span:first-child { color: #7b8f8b; }
+    .info-row span:last-child { max-width: 62%; overflow-wrap: anywhere; }
+    .side-card-title { display: flex; align-items: center; gap: 8px; }
+    .side-card-title::before { content: ""; width: 4px; height: 12px; border-radius: 3px; background: #42dca8; }
+    @media (min-width: 901px) { .watch-side-card { position: sticky; top: 100px; } }
+
+    /* Footer + toast */
+    .footer-note { align-items: center; }
+    .toast { display: flex; align-items: center; gap: 10px; }
+    .toast::before { content: ""; width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: #48e4ac; box-shadow: 0 0 10px rgba(53,214,160,.6); }
+
+    /* Mobile */
+    @media (max-width: 700px) {
+      .sidebar.open + .sidebar-backdrop { opacity: 1; pointer-events: auto; }
+      .sidebar { z-index: 40; }
+      .menu-toggle { display: grid; }
+      .mobile-brand { display: flex; }
+      .topbar-spacer { display: none; }
+      .search-wrap { min-width: 0; flex: 1 1 auto; margin-left: auto; }
+      .hero-art { opacity: .16; right: -14%; }
+      .mobile-brand { color: var(--text); }
+      .heading-sub { font-size: 12px; }
+      .card-time, .card-league, .card-sources { font-size: 9px; }
+      .toast { right: 14px; left: 14px; bottom: 14px; max-width: none; }
+      .watch-title-row .btn-secondary { width: 100%; }
+    }
+    @media (max-width: 420px) {
+      .hero-actions .btn-primary, .hero-actions .btn-secondary { flex: 1 1 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
   </style>
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
       <a class="brand" href="#home" aria-label="STRENZO home">
-        <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.8 2.5 6 14.5h7.1L12 22.5 23 10.8h-7.2l2-8.3Z" fill="currentColor"/></svg></span>
+        <span class="brand-mark"><img src="logo.png" alt="" width="44" height="44" decoding="async" /></span>
         <span><span class="brand-name">STRENZO<span>.</span></span><span class="brand-caption">Live sports network</span></span>
       </a>
       <div class="side-label">Menu</div>
@@ -466,6 +643,7 @@
         <a class="category-link" href="#hockey"><span class="category-dot">🏒</span>Hockey</a>
       </nav>
       <div class="sidebar-bottom">
+        <button class="install-btn" id="installButton" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" stroke-linecap="round" stroke-linejoin="round"/></svg>Install app</button>
         <div class="connection-card">
           <div class="connection-title"><span class="status-dot"></span>API connection</div>
           <div class="connection-host" id="connectionHost">Checking available domains…</div>
@@ -473,11 +651,12 @@
         </div>
       </div>
     </aside>
+    <div class="sidebar-backdrop" aria-hidden="true"></div>
 
     <div class="main-shell">
       <header class="topbar">
         <button class="icon-button menu-toggle" id="menuToggle" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-        <a class="mobile-brand" href="#home"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M17.8 2.5 6 14.5h7.1L12 22.5 23 10.8h-7.2l2-8.3Z" fill="currentColor"/></svg></span>STRENZO</a>
+        <a class="mobile-brand" href="#home"><span class="brand-mark"><img src="logo.png" alt="" width="32" height="32" decoding="async" /></span>STRENZO</a>
         <div class="breadcrumb"><span>STRENZO</span><span>／</span><strong id="breadcrumbTitle">Discover</strong></div>
         <div class="topbar-spacer"></div>
         <label class="search-wrap" aria-label="Search streams">
@@ -708,8 +887,8 @@
       function renderSkeletons() {
         return `<div class="loading-grid">${Array.from({ length: 3 }, () => '<div class="skeleton"><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line"></div></div></div>').join('')}</div>`;
       }
-      function emptyState(title, message, buttonText = 'Explore events', hash = '#home') {
-        return `<div class="empty-state"><div><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5"/><path d="m10 8 6 4-6 4V8Z" fill="currentColor" stroke="none"/></svg></div><h3>${esc(title)}</h3><p>${esc(message)}</p><a class="btn-primary" href="${hash}">${esc(buttonText)}</a></div></div>`;
+      function emptyState(title, message, buttonText = 'Explore events', hash = '#home', action = '') {
+        return `<div class="empty-state"><div><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5"/><path d="m10 8 6 4-6 4V8Z" fill="currentColor" stroke="none"/></svg></div><h3>${esc(title)}</h3><p>${esc(message)}</p><a class="btn-primary" href="${hash}"${action ? ` data-action="${action}"` : ''}>${esc(buttonText)}</a></div></div>`;
       }
       function renderHero(stream) {
         const thumb = safeHttpUrl(stream.thumbnail_url);
@@ -752,7 +931,7 @@
           if (route.page === 'live') { titleText = 'Nothing is live right now'; message = 'No source is currently marked live. Upcoming events and configured feeds will appear in Discover.'; button = 'See all events'; }
           if (route.page === 'favorites') { titleText = 'No favorites yet'; message = 'Tap the star on any event to save it here for quick access.'; button = 'Find an event'; }
           if (state.query.trim()) { titleText = 'No matches'; message = 'Try a different team, league, or sport name.'; button = 'Clear search'; hash = '#home'; }
-          html += emptyState(titleText, message, button, hash);
+          html += emptyState(titleText, message, button, hash, state.query.trim() ? 'clear-search' : '');
         }
         html += `<div class="footer-note"><span>${state.stale ? 'Showing cached data · ' : 'Data refreshes periodically · '}${state.lastUpdated ? `Updated ${new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date(state.lastUpdated))}` : 'Waiting for API response'}</span><span>STRENZO · Powered by StreamFree API · <a href="https://strmfree.pk/" target="_blank" rel="noopener noreferrer">strmfree.pk</a></span></div>`;
         $('#appContent').innerHTML = html;
@@ -777,7 +956,8 @@
         const player = playerUrl
           ? `<iframe src="${esc(playerUrl)}" title="${esc(stream.name)} live stream" allow="fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`
           : `<div class="player-placeholder"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-9Z"/><path d="m10 9 5 3-5 3V9Z" fill="currentColor" stroke="none"/></svg></div><h3>${sources.length ? 'No playable source URL' : 'Waiting for a source'}</h3><p>${sources.length ? 'The API returned sources, but none had a valid StreamFree embed URL.' : 'This event is listed, but the broadcaster has not configured a stream source yet.'}</p></div>`;
-        $('#appContent').innerHTML = `${pageHeading('Now watching', esc(titleCase(category)), `${esc(stream.league || 'Live sports')} · ${esc(formatEventTime(stream.match_timestamp))}`, live ? 'LIVE' : 'FEED SETUP')}
+        $('#appContent').innerHTML = `<a class="back-link" href="#home" data-action="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m6-6-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</a>
+          ${pageHeading('Now watching', esc(titleCase(category)), `${esc(stream.league || 'Live sports')} · ${esc(formatEventTime(stream.match_timestamp))}`, live ? 'LIVE' : 'FEED SETUP')}
           <div class="watch-layout">
             <div>
               <section class="player-panel">
@@ -833,6 +1013,8 @@
         if (!action) return;
         const type = action.dataset.action;
         if (type === 'favorite') { event.preventDefault(); toggleFavorite(action.dataset.key); }
+        if (type === 'clear-search') { state.query = ''; $('#searchInput').value = ''; }
+        if (type === 'back') { event.preventDefault(); if (history.length > 1) history.back(); else go('#home'); }
         if (type === 'source') {
           const route = getRoute();
           const stream = state.streams.find(item => item.stream_key === route.key);
@@ -858,6 +1040,28 @@
       });
       window.addEventListener('hashchange', () => { state.playerKey = null; render(); });
       window.addEventListener('online', () => { showToast('Connection restored. Refreshing streams…'); loadStreams(true); });
+      window.addEventListener('offline', () => showToast('You are offline. Showing saved streams.'));
+
+      // PWA: service worker + install button (service workers need https:// or localhost).
+      let installPrompt = null;
+      const installButton = $('#installButton');
+      const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+      if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(error => console.warn('Service worker registration failed.', error)));
+      }
+      window.addEventListener('beforeinstallprompt', event => {
+        event.preventDefault();
+        installPrompt = event;
+        if (!isStandalone()) installButton.hidden = false;
+      });
+      installButton.addEventListener('click', async () => {
+        if (!installPrompt) return;
+        installPrompt.prompt();
+        await installPrompt.userChoice.catch(() => {});
+        installPrompt = null;
+        installButton.hidden = true;
+      });
+      window.addEventListener('appinstalled', () => { installButton.hidden = true; showToast('STRENZO installed.'); });
 
       // Render cached content immediately, then refresh only when the cache has expired.
       const initialCache = readCache(STORAGE.streams, CACHE_TTL);
