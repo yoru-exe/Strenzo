@@ -539,6 +539,7 @@
 
 
     /* Audit fixes */
+    .sidebar-status { flex: 0 0 auto; padding-top: 14px; margin-top: 12px; border-top: 1px solid var(--line); }
     .watch-heading > div:first-child { flex: 1 1 auto; min-width: 0; }
     .watch-heading h1 { letter-spacing: -.04em; word-spacing: .05em; text-wrap: balance; }
     .watch-heading .heading-actions { flex: 0 0 auto; flex-wrap: nowrap; padding-bottom: 4px; }
@@ -749,7 +750,6 @@
         <a class="nav-link" data-route="home" href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V10Z"/></svg>Discover</a>
         <a class="nav-link" data-route="live" href="#live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 8.7 16 12l-6.5 3.3V8.7Z" fill="currentColor" stroke="none"/></svg>Live now<span class="nav-count" id="liveNavCount">—</span></a>
         <a class="nav-link" data-route="favorites" href="#favorites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>My favorites<span class="nav-count" id="favNavCount">0</span></a>
-        <a class="nav-link" data-route="status" href="#status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>Status<span class="status-led" id="statusLed" data-state="checking" title="Checking servers…"></span></a>
       </nav>
       <div class="side-divider"></div>
       <div class="side-label">Categories</div>
@@ -757,6 +757,9 @@
         <a class="category-link" href="#soccer"><span class="category-dot">⚽</span>Soccer</a>
         <a class="category-link" href="#basketball"><span class="category-dot">🏀</span>Basketball</a>
         <a class="category-link" href="#hockey"><span class="category-dot">🏒</span>Hockey</a>
+      </nav>
+      <nav class="nav-list sidebar-status" aria-label="System">
+        <a class="nav-link" data-route="status" href="#status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>Status<span class="status-led" id="statusLed" data-state="checking" title="Checking servers…"></span></a>
       </nav>
     </aside>
     <div class="sidebar-backdrop" aria-hidden="true"></div>
