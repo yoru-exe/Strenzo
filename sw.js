@@ -1,6 +1,6 @@
 /* STRENZO service worker — caches the app shell only.
    Live data (API) and stream embeds always go to the network so nothing stale is served. */
-const VERSION = 'strenzo-v6';
+const VERSION = 'strenzo-v8';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './logo.png',
   './favicon.ico', './favicon-16.png', './favicon-32.png',

@@ -552,6 +552,9 @@
 
 
     /* Audit fixes */
+    .host-switch { gap: 8px; font-size: 10px; letter-spacing: .01em; }
+    .host-switch svg { width: 15px; height: 15px; flex: 0 0 auto; }
+    .player-host { letter-spacing: .08em; }
     .icon-button svg { stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
     .refresh-button svg { width: 18px; height: 18px; }
     .refresh-button.loading svg, .refresh-button.spinning svg { animation: spin .8s linear infinite; }
@@ -825,8 +828,9 @@
     (() => {
       'use strict';
 
-      // API order: preferred domain first, then automatic backups.
+      // Server order: preferred server first, then automatic backups.
       // Order matters: Primary, then Fallback, then Mirror.
+      const SERVER_ROLES = ['Primary', 'Fallback', 'Mirror'];
       const API_DOMAINS = ['https://strmfree.pk', 'https://streamfree.top', 'https://strmfree.st'];
       const DEFAULT_CATEGORIES = ['soccer', 'basketball', 'hockey', 'combat', 'baseball', 'football', 'racing', 'tennis', 'cricket'];
       const CACHE_TTL = 60 * 1000;
@@ -963,7 +967,7 @@
             lastError = error;
           } finally { clearTimeout(timer); }
         }
-        throw lastError || new Error('All API domains are unavailable');
+        throw lastError || new Error('All servers are unavailable');
       }
       async function loadStreams(force = false) {
         const cached = readCache(STORAGE.streams, CACHE_TTL);
@@ -1126,7 +1130,7 @@
         const live = isLive(stream);
         const category = String(stream.category || 'sports').toLowerCase();
         const isFavorite = state.favorites.includes(stream.stream_key);
-        const hostName = API_DOMAINS[state.playerDomainIndex].replace(/^https:\/\//, '');
+        const hostName = SERVER_ROLES[state.playerDomainIndex] || 'Primary';
         let sourceButtons = sources.map((item, index) => `<button class="source-chip ${index === state.selectedSource ? 'active' : ''}" data-action="source" data-index="${index}"><span class="${item.live ? 'source-live' : 'source-live source-standby'}"></span>${esc(item.quality || 'Source')} ${item.broadcast ? `· ${esc(item.broadcast)}` : ''}</button>`).join('');
         if (!sourceButtons) sourceButtons = '<span style="color:#82929d;font-size:10px">No sources have been configured for this event yet.</span>';
         const player = playerUrl
@@ -1139,9 +1143,9 @@
           <div class="watch-layout">
             <div>
               <section class="player-panel">
-                <div class="player-topline"><div class="player-topline-left"><span class="status-dot" style="${live ? '' : 'background:#79cdb0;box-shadow:none'}"></span>${live ? 'Live player' : 'Stream player'}</div><span class="player-host">PLAYER · ${esc(hostName)}</span></div>
+                <div class="player-topline"><div class="player-topline-left"><span class="status-dot" style="${live ? '' : 'background:#79cdb0;box-shadow:none'}"></span>${live ? 'Live player' : 'Stream player'}</div><span class="player-host">SERVER · ${esc(hostName)}</span></div>
                 <div class="player-frame">${player}</div>
-                <div class="player-controls"><div class="source-list">${sourceButtons}</div><button class="host-switch" data-action="next-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h13l-3-3m6 13H7l3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7a5 5 0 0 1 0 10" stroke-linecap="round"/></svg>Try backup domain</button></div>
+                <div class="player-controls"><div class="source-list">${sourceButtons}</div><button class="host-switch" data-action="next-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>Try Backup Server</button></div>
               </section>
             </div>
             <aside class="watch-side-card"><h3 class="side-card-title">Stream details</h3>
@@ -1151,10 +1155,10 @@
               <div class="info-row"><span>Available sources</span><span>${sources.length}</span></div>
               <div class="info-row"><span>Live sources</span><span>${liveSourceCount(stream)}</span></div>
               <div class="info-row"><span>Scheduled</span><span>${esc(formatEventTime(stream.match_timestamp))}</span></div>
-              <div class="watch-note">Having playback trouble? Switch to another source or try a backup domain. Some feeds only become playable shortly before kickoff.</div>
+              <div class="watch-note">Having playback trouble? Switch to another source or try a backup server. Some feeds only become playable shortly before kickoff.</div>
             </aside>
           </div>
-          <div class="footer-note"><span>Feed not loading? Try another source or a backup domain from the player controls.</span><span>STRENZO · Build by AziF &amp; Yoru</span></div>`;
+          <div class="footer-note"><span>Feed not loading? Try another source or a backup server from the player controls.</span><span>STRENZO · Build by AziF &amp; Yoru</span></div>`;
       }
       // ── Server status ──
       const SERVERS = [
@@ -1321,7 +1325,7 @@
         if (type === 'next-host') {
           state.playerDomainIndex = (state.playerDomainIndex + 1) % API_DOMAINS.length;
           render();
-          showToast(`Trying ${API_DOMAINS[state.playerDomainIndex].replace(/^https:\/\//, '')}`);
+          showToast(`Switched to ${SERVER_ROLES[state.playerDomainIndex] || 'backup'} server`);
         }
       });
       $('#searchInput').addEventListener('input', event => { state.query = event.target.value; if (['watch', 'status'].includes(getRoute().page)) go('#home'); else render(); });
