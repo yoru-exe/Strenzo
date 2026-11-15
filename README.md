@@ -49,6 +49,11 @@ To use a custom domain, add it under **Settings → Pages** and add a `CNAME` fi
 
 After changing any file, bump `VERSION` in `sw.js` so installed copies pick up the update.
 
+## Other hosts
+
+On Cloudflare Pages or Netlify, publish the repo root. The included `_headers` file sets sensible caching and security headers
+(it is ignored by GitHub Pages). Inter is bundled in `fonts/` (SIL Open Font License), so no external requests are needed for fonts.
+
 ## Repo cover (shown when the repo link is shared, e.g. on Discord)
 
 Upload `.github/social-preview.png` under **Settings → General → Social preview → Edit → Upload an image**.

@@ -1,9 +1,9 @@
 /* STRENZO service worker — caches the app shell only.
    Live data (API) and stream embeds always go to the network so nothing stale is served. */
-const VERSION = 'strenzo-v1.2.10';
+const VERSION = 'strenzo-v1.2.11';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './logo.png',
-  './favicon.ico', './favicon-16.png', './favicon-32.png',
+  './favicon.ico', './favicon-16.png', './favicon-32.png', './favicon-48.png',
   './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   './icon-maskable-192.png', './icon-maskable-512.png'
 ];

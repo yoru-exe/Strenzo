@@ -7,6 +7,8 @@
   <meta name="color-scheme" content="dark" />
   <link rel="preconnect" href="https://strmfree.pk" crossorigin />
   <link rel="preload" as="image" href="logo-128.png" />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/inter-400.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/inter-800.woff2" crossorigin />
   <meta name="description" content="STRENZO brings live sports streams together in one place." />
   <!-- Link previews (Discord, Telegram, WhatsApp, X, etc.). __SITE_URL__ is filled in automatically by the GitHub Pages workflow;
        on any other host, replace it with your full site address, e.g. https://example.com -->
@@ -35,6 +37,10 @@
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
   <title>STRENZO — Live Sports</title>
   <style>
+    @font-face { font-family: Inter; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/inter-400.woff2") format("woff2"); }
+    @font-face { font-family: Inter; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/inter-700.woff2") format("woff2"); }
+    @font-face { font-family: Inter; font-style: normal; font-weight: 800; font-display: swap; src: url("fonts/inter-800.woff2") format("woff2"); }
+    @font-face { font-family: Inter; font-style: normal; font-weight: 900; font-display: swap; src: url("fonts/inter-900.woff2") format("woff2"); }
     :root {
       color-scheme: dark;
       --bg: #070b10;
@@ -97,7 +103,7 @@
     .nav-link.active svg { opacity: 1; }
     .nav-count { margin-left: auto; color: #71818d; font-size: 10px; font-variant-numeric: tabular-nums; }
     .side-divider { height: 1px; margin: 27px 8px 23px; background: var(--line); }
-    .category-nav { display: grid; gap: 3px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #283743 transparent; }
+    .category-nav { display: grid; gap: 3px; }
     .category-link { display: flex; align-items: center; gap: 11px; min-height: 38px; padding: 0 12px; border-radius: 9px; color: #8d9ba6; font-size: 12px; font-weight: 620; }
     .category-link:hover, .category-link.active { color: var(--text); background: rgba(255,255,255,.045); }
     .category-dot { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: #17232c; font-size: 12px; }
@@ -488,7 +494,6 @@
 
     /* Sidebar */
     .sidebar { overflow: hidden; }
-    .category-nav { flex: 1 1 auto; min-height: 0; align-content: start; padding-right: 2px; }
     @media (min-width: 701px) { .menu-toggle, .mobile-brand { display: none; } }
     .sidebar-bottom { flex: 0 0 auto; }
     .nav-link { position: relative; }
@@ -761,6 +766,53 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
     }
+
+    /* ───────── Sidebar: scroll area + Categories dropdown ───────── */
+    .sidebar { overflow: hidden; }
+    .side-scroll { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; margin: 0 -10px; padding: 0 10px 4px; scrollbar-width: thin; scrollbar-color: #283743 transparent; }
+    .side-scroll::-webkit-scrollbar { width: 6px; }
+    .side-scroll::-webkit-scrollbar-thumb { background: #283743; border-radius: 6px; }
+    .side-scroll > * { flex: 0 0 auto; }
+    .side-scroll > .sidebar-status { margin-top: auto; }
+    .side-group { margin-bottom: 12px; }
+    .side-toggle { width: 100%; background: none; font-family: inherit; text-align: left; cursor: pointer; }
+    .side-toggle .nav-count { margin-left: auto; }
+    .side-toggle .chev { width: 16px; height: 16px; flex: 0 0 auto; opacity: .7; transition: transform .28s var(--ease); }
+    .side-group.open .side-toggle .chev { transform: rotate(180deg); }
+    .side-toggle:hover { color: var(--text); background: rgba(255,255,255,.045); }
+    .side-toggle.has-active { color: #5de6b4; }
+    .side-toggle.has-active .nav-count { color: #06150f; background: #42dca8; }
+    .side-toggle:focus-visible { outline: 2px solid rgba(53,214,160,.6); outline-offset: 2px; }
+    .side-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s var(--ease); }
+    .side-group.open .side-collapse { grid-template-rows: 1fr; }
+    .side-collapse > .category-nav { min-height: 0; overflow: hidden; visibility: hidden; margin: 0 0 0 22px; padding-left: 6px; border-left: 1px solid var(--line); transition: visibility 0s linear .3s; }
+    .side-group.open .side-collapse > .category-nav { visibility: visible; transition-delay: 0s; }
+    .side-collapse > .category-nav::before, .side-collapse > .category-nav::after { content: ""; display: block; height: 4px; }
+
+    /* ───────── Mobile search: icon → full-width bar below the top bar ───────── */
+    .search-toggle { display: none; position: relative; }
+    .search-toggle .ic-close { display: none; }
+    .topbar.search-open .search-toggle .ic-search { display: none; }
+    .topbar.search-open .search-toggle .ic-close { display: block; }
+    .search-toggle.has-query::after { content: ""; position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: #48e4ac; box-shadow: 0 0 0 2px #0e171d; }
+    .topbar.search-open .search-toggle { color: #53dfad; border-color: rgba(53,214,160,.35); }
+    @media (max-width: 700px) {
+      .topbar { gap: 10px; }
+      .topbar-spacer { display: block; flex: 1; }
+      .topbar .search-toggle, .topbar .refresh-button { display: grid; width: 40px; height: 40px; }
+      .topbar .search-wrap {
+        position: absolute; top: 100%; left: 0; right: 0; z-index: 5; width: auto; min-width: 0; margin: 0; flex: none;
+        padding: 10px 16px 12px; background: rgba(8,12,17,.97); backdrop-filter: blur(18px);
+        border-bottom: 1px solid var(--line); box-shadow: 0 20px 34px rgba(0,0,0,.4);
+        opacity: 0; visibility: hidden; transform: translateY(-6px); pointer-events: none;
+        transition: opacity .2s ease, transform .24s var(--ease), visibility 0s linear .24s;
+      }
+      .topbar.search-open .search-wrap { opacity: 1; visibility: visible; transform: none; pointer-events: auto; transition-delay: 0s; }
+      .topbar .search-wrap svg { left: 32px; top: calc(50% - 1px); width: 16px; height: 16px; }
+      .topbar .search-input { width: 100%; height: 44px; padding-left: 42px; font-size: 16px; }
+    }
+    /* Don't animate inherited visibility on the input, so it can be focused instantly. */
+    .topbar .search-input { transition: border-color .18s ease, background-color .18s ease, box-shadow .18s ease; }
   </style>
 </head>
 <body>
@@ -771,22 +823,30 @@
         <span class="brand-mark"><img src="logo-128.png" alt="" width="44" height="44" decoding="async" fetchpriority="high" /></span>
         <span><span class="brand-name">STRENZO<span>.</span></span><span class="brand-caption">Live sports network</span></span>
       </a>
-      <div class="side-label">Menu</div>
-      <nav class="nav-list" aria-label="Main navigation">
-        <a class="nav-link" data-route="home" href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V10Z"/></svg>Discover</a>
-        <a class="nav-link" data-route="live" href="#live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 8.7 16 12l-6.5 3.3V8.7Z" fill="currentColor" stroke="none"/></svg>Live now<span class="nav-count" id="liveNavCount">—</span></a>
-        <a class="nav-link" data-route="favorites" href="#favorites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>My favorites<span class="nav-count" id="favNavCount">0</span></a>
-      </nav>
-      <div class="side-divider"></div>
-      <div class="side-label">Categories</div>
-      <nav class="category-nav" id="categoryNav" aria-label="Sports categories">
-        <a class="category-link" href="#soccer"><span class="category-dot">⚽</span>Soccer</a>
-        <a class="category-link" href="#basketball"><span class="category-dot">🏀</span>Basketball</a>
-        <a class="category-link" href="#hockey"><span class="category-dot">🏒</span>Hockey</a>
-      </nav>
-      <nav class="nav-list sidebar-status" aria-label="System">
-        <a class="nav-link" data-route="status" href="#status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>Status<span class="status-led" id="statusLed" data-state="checking" title="Checking servers…"></span></a>
-      </nav>
+      <div class="side-scroll">
+        <div class="side-label">Menu</div>
+        <nav class="nav-list" aria-label="Main navigation">
+          <a class="nav-link" data-route="home" href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V10Z"/></svg>Discover</a>
+          <a class="nav-link" data-route="live" href="#live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 8.7 16 12l-6.5 3.3V8.7Z" fill="currentColor" stroke="none"/></svg>Live now<span class="nav-count" id="liveNavCount">—</span></a>
+          <a class="nav-link" data-route="favorites" href="#favorites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>My favorites<span class="nav-count" id="favNavCount">0</span></a>
+        </nav>
+        <div class="side-divider"></div>
+        <div class="side-group" id="categoryGroup">
+          <button class="nav-link side-toggle" id="categoryToggle" type="button" aria-expanded="false" aria-controls="categoryPanel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/></svg>Categories<span class="nav-count" id="categoryCount">0</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="side-collapse" id="categoryPanel">
+            <nav class="category-nav" id="categoryNav" aria-label="Sports categories">
+              <a class="category-link" href="#soccer"><span class="category-dot">⚽</span>Soccer</a>
+              <a class="category-link" href="#basketball"><span class="category-dot">🏀</span>Basketball</a>
+              <a class="category-link" href="#hockey"><span class="category-dot">🏒</span>Hockey</a>
+            </nav>
+          </div>
+        </div>
+        <nav class="nav-list sidebar-status" aria-label="System">
+          <a class="nav-link" data-route="status" href="#status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>Status<span class="status-led" id="statusLed" data-state="checking" title="Checking servers…"></span></a>
+        </nav>
+      </div>
     </aside>
     <div class="sidebar-backdrop" aria-hidden="true"></div>
 
@@ -796,10 +856,11 @@
         <a class="mobile-brand" href="#home"><span class="brand-mark"><img src="logo-128.png" alt="" width="32" height="32" decoding="async" fetchpriority="high" /></span>STRENZO</a>
         <div class="breadcrumb"><span>STRENZO</span><span>／</span><strong id="breadcrumbTitle">Discover</strong></div>
         <div class="topbar-spacer"></div>
-        <label class="search-wrap" aria-label="Search streams">
+        <label class="search-wrap" id="searchWrap" aria-label="Search streams">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5" stroke-linecap="round"/></svg>
           <input class="search-input" id="searchInput" type="search" placeholder="Search teams, leagues…" autocomplete="off" />
         </label>
+        <button class="icon-button search-toggle" id="searchToggle" type="button" aria-label="Search" aria-expanded="false" aria-controls="searchWrap"><svg class="ic-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg><svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
         <button class="icon-button refresh-button" id="refreshButton" aria-label="Refresh streams" title="Refresh streams"><svg id="refreshIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button>
       </header>
       <main class="content" id="appContent" tabindex="-1">
@@ -949,6 +1010,36 @@
         netModalOpen = false; $('#netModal').hidden = true;
         if (netLastFocus && netLastFocus.focus) netLastFocus.focus({ preventScroll: true });
       }
+      // ── Sidebar categories dropdown ──
+      const CAT_OPEN_KEY = 'sf_cat_open_v1';
+      function setCategoryOpen(open, persist = true) {
+        $('#categoryGroup').classList.toggle('open', open);
+        $('#categoryToggle').setAttribute('aria-expanded', String(open));
+        if (persist) { try { localStorage.setItem(CAT_OPEN_KEY, open ? '1' : '0'); } catch (_) {} }
+      }
+      (function initCategoryDropdown() {
+        let saved = null;
+        try { saved = localStorage.getItem(CAT_OPEN_KEY); } catch (_) {}
+        setCategoryOpen(saved === null ? window.innerWidth > 700 : saved === '1', false);
+        $('#categoryToggle').addEventListener('click', () => setCategoryOpen(!$('#categoryGroup').classList.contains('open')));
+      })();
+
+      // ── Mobile search bar ──
+      const topbarEl = document.querySelector('.topbar'), searchToggle = $('#searchToggle');
+      function setSearchOpen(open) {
+        topbarEl.classList.toggle('search-open', open);
+        searchToggle.setAttribute('aria-expanded', String(open));
+        searchToggle.setAttribute('aria-label', open ? 'Close search' : 'Search');
+        // Focus synchronously inside the tap so mobile keyboards open reliably.
+        if (open) $('#searchInput').focus({ preventScroll: true });
+        else $('#searchInput').blur();
+      }
+      function syncSearchBadge() { searchToggle.classList.toggle('has-query', state.query.trim().length > 0); }
+      searchToggle.addEventListener('click', () => setSearchOpen(!topbarEl.classList.contains('search-open')));
+      $('#searchInput').addEventListener('keydown', event => { if (event.key === 'Enter' && window.innerWidth <= 700) setSearchOpen(false); });
+      document.addEventListener('keydown', event => { if (event.key === 'Escape' && topbarEl.classList.contains('search-open')) setSearchOpen(false); });
+      window.addEventListener('resize', () => { if (window.innerWidth > 700 && topbarEl.classList.contains('search-open')) setSearchOpen(false); });
+
       function showToast(message) {
         const toast = $('#toast');
         toast.textContent = message;
@@ -1033,6 +1124,7 @@
         const nav = $('#categoryNav');
         if (!nav) return;
         nav.innerHTML = state.categories.map(category => `<a class="category-link" data-category="${esc(category)}" href="#${esc(category)}"><span class="category-dot">${categoryIcon(category)}</span>${esc(titleCase(category))}</a>`).join('');
+        $('#categoryCount').textContent = state.categories.length;
         $('#liveNavCount').textContent = state.streams.filter(isLive).length;
         $('#favNavCount').textContent = state.favorites.length;
         updateStatusLed();
@@ -1098,11 +1190,11 @@
       function renderBrowse(route) {
         const items = getFilteredStreams(route);
         const allItems = state.streams.slice().sort((a, b) => Number(isLive(b)) - Number(isLive(a)) || (Number(a.match_timestamp) || 0) - (Number(b.match_timestamp) || 0));
-        let title = 'Discover'; let eyebrow = 'Your front row seat'; let subtitle = 'Find the action, pick a stream, and settle in.'; let badge = `${state.streams.length} EVENTS`;
+        let title = 'Discover'; let eyebrow = 'Your front row seat'; let subtitle = 'Find the action, pick a stream, and settle in.'; let badge = `${state.streams.length} ${state.streams.length === 1 ? 'EVENT' : 'EVENTS'}`;
         if (route.page === 'live') { title = 'Live right now'; eyebrow = 'The action is on'; subtitle = 'Streams with at least one source currently marked live.'; badge = `${items.length} LIVE`; }
         if (route.page === 'favorites') { title = 'Your favorites'; eyebrow = 'Saved for later'; subtitle = 'Your bookmarked events, all in one place.'; badge = `${items.length} SAVED`; }
-        if (route.page === 'category') { title = titleCase(route.category); eyebrow = 'Browse category'; subtitle = `All available ${titleCase(route.category).toLowerCase()} streams in one place.`; badge = `${items.length} EVENTS`; }
-        if (state.query.trim()) { eyebrow = 'Search results'; title = `Search`; subtitle = `Showing matches for “${state.query.trim()}”.`; badge = `${items.length} MATCHES`; }
+        if (route.page === 'category') { title = titleCase(route.category); eyebrow = 'Browse category'; subtitle = `All available ${titleCase(route.category).toLowerCase()} streams in one place.`; badge = `${items.length} ${items.length === 1 ? 'EVENT' : 'EVENTS'}`; }
+        if (state.query.trim()) { eyebrow = 'Search results'; title = `Search`; subtitle = `Showing matches for “${state.query.trim()}”.`; badge = `${items.length} ${items.length === 1 ? 'MATCH' : 'MATCHES'}`; }
         let html = pageHeading(eyebrow, esc(title), subtitle, badge);
         if (route.page === 'home' && !state.query.trim() && allItems.length) html += renderHero(allItems[0]);
         if (route.page === 'home' && !state.query.trim()) {
@@ -1284,6 +1376,8 @@
       function updateActiveNav(route) {
         document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.route === route.page));
         document.querySelectorAll('.category-link').forEach(link => link.classList.toggle('active', route.page === 'category' && link.dataset.category === route.category));
+        $('#categoryToggle').classList.toggle('has-active', route.page === 'category');
+        if (route.page === 'category') setCategoryOpen(true, false);
         const breadcrumb = route.page === 'watch' ? 'Watch' : route.page === 'category' ? titleCase(route.category) : ({ home: 'Discover', live: 'Live now', favorites: 'Favorites', status: 'Status' }[route.page] || 'Discover');
         $('#breadcrumbTitle').textContent = breadcrumb;
       }
@@ -1317,7 +1411,7 @@
           loadStreams(true).finally(() => setTimeout(() => button.classList.remove('loading'), Math.max(0, 700 - (Date.now() - started))));
         }
         if (type === 'recheck') checkHealth(true);
-        if (type === 'clear-search') { state.query = ''; $('#searchInput').value = ''; }
+        if (type === 'clear-search') { state.query = ''; $('#searchInput').value = ''; syncSearchBadge(); }
         if (type === 'back') { event.preventDefault(); if (history.length > 1) history.back(); else go('#home'); }
         if (type === 'source') {
           const route = getRoute();
@@ -1335,13 +1429,13 @@
           showToast(`Switched to ${SERVER_ROLES[state.playerDomainIndex] || 'backup'} server`);
         }
       });
-      $('#searchInput').addEventListener('input', event => { state.query = event.target.value; if (['watch', 'status'].includes(getRoute().page)) go('#home'); else render(); });
+      $('#searchInput').addEventListener('input', event => { state.query = event.target.value; syncSearchBadge(); if (['watch', 'status'].includes(getRoute().page)) go('#home'); else render(); });
       $('#refreshButton').addEventListener('click', () => {
         const button = $('#refreshButton'); const started = Date.now();
         button.classList.add('spinning');
         Promise.resolve(loadStreams(true)).finally(() => setTimeout(() => button.classList.remove('spinning'), Math.max(0, 600 - (Date.now() - started))));
       });
-      $('#menuToggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
+      $('#menuToggle').addEventListener('click', () => { setSearchOpen(false); $('#sidebar').classList.toggle('open'); });
       $('#sidebar').addEventListener('click', event => { if (event.target.closest('a')) closeSidebar(); });
       document.addEventListener('click', event => {
         if (window.innerWidth <= 700 && !event.target.closest('#sidebar') && !event.target.closest('#menuToggle')) closeSidebar();
