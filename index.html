@@ -154,10 +154,6 @@
     }
     .hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(7,13,17,.96) 0%, rgba(7,13,17,.82) 42%, rgba(7,13,17,.18) 100%), linear-gradient(0deg, rgba(4,8,12,.7), transparent 62%); z-index: 1; }
     .hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .6; }
-    .hero-art { position: absolute; right: 3%; top: 50%; width: min(36%, 380px); aspect-ratio: 1; transform: translateY(-50%); opacity: .52; }
-    .hero-art::before, .hero-art::after { content: ""; position: absolute; border: 1px solid rgba(53,214,160,.23); border-radius: 50%; inset: 5%; }
-    .hero-art::after { inset: 22%; border-color: rgba(126,220,242,.22); }
-    .hero-art span { position: absolute; inset: 35%; display: grid; place-items: center; color: rgba(53,214,160,.7); font-size: clamp(48px, 8vw, 92px); }
     .hero-content { position: relative; z-index: 2; max-width: 620px; }
     .hero-kicker { display: flex; align-items: center; gap: 10px; margin-bottom: 17px; }
     .hero-league { color: #b4c4cc; font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
@@ -286,7 +282,6 @@
       .topbar .refresh-button { width: 38px; height: 38px; }
       .content { padding: 27px 16px 40px; }
       .hero { min-height: 280px; padding: 24px; margin: 21px 0 31px; }
-      .hero-art { right: -9%; width: 49%; opacity: .35; }
       .stream-grid, .loading-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 11px; }
       .card-info { padding: 11px; }
       .card-title { font-size: 12px; }
@@ -406,10 +401,6 @@
       background: linear-gradient(90deg, rgba(5,13,15,.96) 0%, rgba(5,13,15,.82) 43%, rgba(5,13,15,.14) 100%), linear-gradient(0deg, rgba(3,9,10,.72), transparent 68%);
     }
     .hero-image { opacity: .52; filter: saturate(.78) contrast(1.06); }
-    .hero-art { opacity: .68; filter: drop-shadow(0 0 42px rgba(53,214,160,.08)); }
-    .hero-art::before { border-color: rgba(91,233,183,.26); box-shadow: 0 0 70px rgba(53,214,160,.055); }
-    .hero-art::after { border-color: rgba(126,220,242,.18); }
-    .hero-art span { color: rgba(92,236,184,.75); }
     .hero h2 { letter-spacing: -.065em; }
     .hero-desc { color: #b0c3bf; }
     .btn-primary, .btn-secondary { min-height: 45px; padding-inline: 18px; border-radius: 11px; }
@@ -576,7 +567,6 @@
     .card-league { margin-bottom: 13px; }
     @media (max-width: 700px) { .watch-heading .heading-actions { flex-wrap: wrap; } }
     .player-frame { min-height: 0; }
-    .hero-art span { inset: 26%; line-height: 1; font-size: clamp(44px, 6vw, 84px); }
     .watch-layout > * { min-width: 0; }
     .watch-heading h1 { font-size: clamp(25px, 3vw, 36px); line-height: 1.12; }
     .heading-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
@@ -680,8 +670,6 @@
     .hero-content { text-wrap: balance; }
     .hero h2 { text-shadow: 0 2px 30px rgba(0,0,0,.35); }
     .hero-desc { font-size: 13px; }
-    .hero-art span { animation: float 6s ease-in-out infinite; }
-    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     .btn-primary, .btn-secondary { font-size: 12px; }
     .btn-primary:active, .btn-secondary:active { transform: scale(.97); }
     .btn-secondary { backdrop-filter: blur(8px); }
@@ -753,7 +741,6 @@
       .mobile-brand { display: flex; }
       .topbar-spacer { display: none; }
       .search-wrap { min-width: 0; flex: 1 1 auto; margin-left: auto; }
-      .hero-art { opacity: .16; right: -14%; }
       .mobile-brand { color: var(--text); }
       .heading-sub { font-size: 12px; }
       .card-time, .card-league, .card-sources { font-size: 9px; }
@@ -813,6 +800,16 @@
     }
     /* Don't animate inherited visibility on the input, so it can be focused instantly. */
     .topbar .search-input { transition: border-color .18s ease, background-color .18s ease, box-shadow .18s ease; }
+
+    /* ───────── Spotlight: auto-rotating slides ───────── */
+    .hero .hero-image { opacity: 0; transition: opacity .9s ease; }
+    .hero .hero-image.active { opacity: .52; }
+    .hero-slides { position: relative; z-index: 2; flex: 1 1 auto; min-width: 0; display: grid; }
+    .hero-slide { grid-area: 1 / 1; align-self: end; min-width: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .35s ease, visibility 0s linear .35s; }
+    .hero-slide.active { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity .6s ease .3s, visibility 0s linear 0s; }
+    .hero-slide .hero-content { transform: translateY(10px); transition: transform .7s var(--ease) .3s; }
+    .hero-slide.active .hero-content { transform: none; }
+    @media (prefers-reduced-motion: reduce) { .hero-slide, .hero .hero-image { transition: none !important; } }
   </style>
 </head>
 <body>
@@ -1169,20 +1166,57 @@
       function emptyState(title, message, buttonText = 'Explore events', hash = '#home', action = '') {
         return `<div class="empty-state"><div><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5"/><path d="m10 8 6 4-6 4V8Z" fill="currentColor" stroke="none"/></svg></div><h3>${esc(title)}</h3><p>${esc(message)}</p><a class="btn-primary" href="${hash}"${action ? ` data-action="${action}"` : ''}>${esc(buttonText)}</a></div></div>`;
       }
-      function renderHero(stream) {
-        const thumb = safeHttpUrl(stream.thumbnail_url);
-        const live = isLive(stream);
-        const category = String(stream.category || 'sports').toLowerCase();
-        return `<section class="hero">
-          ${thumb ? `<img class="hero-image" src="${esc(thumb)}" alt="" decoding="async" fetchpriority="high" onerror="this.style.display='none'">` : ''}
-          <div class="hero-art"><span>${categoryIcon(category)}</span></div>
-          <div class="hero-content">
-            <div class="hero-kicker"><span class="live-pill" style="${live ? '' : 'color:#d8e5ae;background:rgba(53,214,160,.08);border-color:rgba(53,214,160,.17)'}">${live ? 'Live event' : 'Featured event'}</span><span class="hero-league">${esc(stream.league || titleCase(category))}</span></div>
-            <h2>${esc(stream.name || 'Your next live event')}</h2>
-            <p class="hero-desc">${esc(titleCase(category))} · ${esc(formatEventTime(stream.match_timestamp))} · ${sourceCount(stream)} available source${sourceCount(stream) === 1 ? '' : 's'}</p>
-            <div class="hero-actions"><a class="btn-primary" href="#watch/${esc(stream.stream_key || '')}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.8c0-.9 1-1.5 1.8-1l10 6.1a1.2 1.2 0 0 1 0 2L8.8 18a1.2 1.2 0 0 1-1.8-1V4.8Z"/></svg>Watch stream</a><a class="btn-secondary" href="#${esc(category)}">Explore ${esc(titleCase(category))}</a></div>
-          </div>
-        </section>`;
+      // Spotlight: the top events rotate automatically (no arrows or dots).
+      const HERO_SLIDES = 5, HERO_MS = 7000;
+      let heroTimer = null;
+      function renderHero(streams) {
+        const active = Math.min(state.heroIndex || 0, streams.length - 1);
+        const images = streams.map((stream, index) => {
+          const thumb = safeHttpUrl(stream.thumbnail_url);
+          return thumb ? `<img class="hero-image${index === active ? ' active' : ''}" data-slide="${index}" src="${esc(thumb)}" alt="" decoding="async"${index === 0 ? ' fetchpriority="high"' : ''} onerror="this.style.display='none'">` : '';
+        }).join('');
+        const slides = streams.map((stream, index) => {
+          const live = isLive(stream);
+          const category = String(stream.category || 'sports').toLowerCase();
+          const on = index === active;
+          return `<div class="hero-slide${on ? ' active' : ''}" data-slide="${index}" role="group" aria-roledescription="slide" aria-label="${index + 1} of ${streams.length}" aria-hidden="${on ? 'false' : 'true'}"${on ? '' : ' inert'}>
+            <div class="hero-content">
+              <div class="hero-kicker"><span class="live-pill" style="${live ? '' : 'color:#d8e5ae;background:rgba(53,214,160,.08);border-color:rgba(53,214,160,.17)'}">${live ? 'Live event' : 'Featured event'}</span><span class="hero-league">${esc(stream.league || titleCase(category))}</span></div>
+              <h2>${esc(stream.name || 'Your next live event')}</h2>
+              <p class="hero-desc">${esc(titleCase(category))} · ${esc(formatEventTime(stream.match_timestamp))} · ${sourceCount(stream)} available source${sourceCount(stream) === 1 ? '' : 's'}</p>
+              <div class="hero-actions"><a class="btn-primary" href="#watch/${esc(stream.stream_key || '')}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.8c0-.9 1-1.5 1.8-1l10 6.1a1.2 1.2 0 0 1 0 2L8.8 18a1.2 1.2 0 0 1-1.8-1V4.8Z"/></svg>Watch stream</a><a class="btn-secondary" href="#${esc(category)}">Explore ${esc(titleCase(category))}</a></div>
+            </div>
+          </div>`;
+        }).join('');
+        return `<section class="hero" aria-roledescription="carousel" aria-label="Spotlight">${images}<div class="hero-slides">${slides}</div></section>`;
+      }
+      function applyHeroSlide() {
+        const index = state.heroIndex || 0;
+        document.querySelectorAll('.hero [data-slide]').forEach(element => {
+          const on = Number(element.dataset.slide) === index;
+          element.classList.toggle('active', on);
+          if (element.classList.contains('hero-slide')) { element.setAttribute('aria-hidden', String(!on)); element.inert = !on; }
+        });
+      }
+      function startHero() {
+        clearInterval(heroTimer); heroTimer = null;
+        const hero = document.querySelector('.hero');
+        if (!hero) return;
+        const count = hero.querySelectorAll('.hero-slide').length;
+        if (!state.heroIndex || state.heroIndex >= count) state.heroIndex = 0;
+        applyHeroSlide();
+        if (count < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        let paused = false;   // pause while the pointer or keyboard focus is on the spotlight
+        hero.addEventListener('mouseenter', () => { paused = true; });
+        hero.addEventListener('mouseleave', () => { paused = false; });
+        hero.addEventListener('focusin', () => { paused = true; });
+        hero.addEventListener('focusout', () => { paused = false; });
+        heroTimer = setInterval(() => {
+          if (!document.body.contains(hero)) { clearInterval(heroTimer); heroTimer = null; return; }
+          if (paused || document.hidden) return;
+          state.heroIndex = ((state.heroIndex || 0) + 1) % count;
+          applyHeroSlide();
+        }, HERO_MS);
       }
       function pageHeading(eyebrow, title, subtitle, badge = '') {
         return `<div class="eyebrow"><span class="eyebrow-line"></span>${esc(eyebrow)}</div><div class="page-heading"><div><h1>${title}</h1><p class="heading-sub">${esc(subtitle)}</p></div>${badge ? `<span class="live-pill">${esc(badge)}</span>` : ''}</div>`;
@@ -1196,7 +1230,7 @@
         if (route.page === 'category') { title = titleCase(route.category); eyebrow = 'Browse category'; subtitle = `All available ${titleCase(route.category).toLowerCase()} streams in one place.`; badge = `${items.length} ${items.length === 1 ? 'EVENT' : 'EVENTS'}`; }
         if (state.query.trim()) { eyebrow = 'Search results'; title = `Search`; subtitle = `Showing matches for “${state.query.trim()}”.`; badge = `${items.length} ${items.length === 1 ? 'MATCH' : 'MATCHES'}`; }
         let html = pageHeading(eyebrow, esc(title), subtitle, badge);
-        if (route.page === 'home' && !state.query.trim() && allItems.length) html += renderHero(allItems[0]);
+        if (route.page === 'home' && !state.query.trim() && allItems.length) html += renderHero(allItems.slice(0, HERO_SLIDES));
         if (route.page === 'home' && !state.query.trim()) {
           html += `<div class="section-head"><h2 class="section-title"><span class="mini-mark"></span>Browse by sport</h2></div>`;
           html += `<div class="filter-row">${state.categories.map(category => `<a class="filter-chip" href="#${esc(category)}">${categoryIcon(category)} &nbsp;${esc(titleCase(category))}</a>`).join('')}</div>`;
@@ -1388,6 +1422,7 @@
         if (route.page === 'watch') renderWatch(route);
         else if (route.page === 'status') renderStatus();
         else renderBrowse(route);
+        startHero();
       }
       function toggleFavorite(key) {
         if (!key) return;
