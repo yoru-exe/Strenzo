@@ -10,6 +10,7 @@
   <img alt="JavaScript" src="https://img.shields.io/badge/Vanilla_JS-f7df1e?style=for-the-badge&logo=javascript&logoColor=f7df1e&labelColor=0b141a" />
   <img alt="No build step" src="https://img.shields.io/badge/Build_step-none-35d6a0?style=for-the-badge&labelColor=0b141a" />
   <img alt="GitHub Pages" src="https://img.shields.io/badge/Deploy-GitHub_Pages-35d6a0?style=for-the-badge&logo=github&logoColor=white&labelColor=0b141a" />
+  <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-35d6a0?style=for-the-badge&labelColor=0b141a" />
 </p>
 
 <!--
@@ -62,4 +63,4 @@ Then open http://localhost:8000 (service workers need localhost or https).
 
 ---
 
-<p align="center">STRENZO · Build by AziF &amp; Yoru</p>
+<p align="center">Released under the <a href="LICENSE">MIT License</a> · STRENZO · Build by AziF &amp; Yoru</p>
