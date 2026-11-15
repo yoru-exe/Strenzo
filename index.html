@@ -5,9 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#070b10" />
   <meta name="description" content="STRENZO brings live sports streams together in one place." />
+  <!-- Link previews (Discord, Telegram, WhatsApp, X, etc.). __SITE_URL__ is filled in automatically by the GitHub Pages workflow;
+       on any other host, replace it with your full site address, e.g. https://example.com -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="STRENZO" />
   <meta property="og:title" content="STRENZO — Live Sports" />
-  <meta property="og:description" content="Live sports streams, all in one place." />
-  <meta property="og:image" content="icon-512.png" />
+  <meta property="og:description" content="Live sports. One place. Fast, clean and installable on any device." />
+  <meta property="og:url" content="__SITE_URL__/" />
+  <meta property="og:image" content="__SITE_URL__/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="STRENZO logo — Live sports. One place." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="STRENZO — Live Sports" />
+  <meta name="twitter:description" content="Live sports. One place. Fast, clean and installable on any device." />
+  <meta name="twitter:image" content="__SITE_URL__/og-image.png" />
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -539,6 +552,9 @@
 
 
     /* Audit fixes */
+    .icon-button svg { stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+    .refresh-button svg { width: 18px; height: 18px; }
+    .refresh-button.loading svg, .refresh-button.spinning svg { animation: spin .8s linear infinite; }
     .sidebar-status { flex: 0 0 auto; padding-top: 14px; margin-top: 12px; border-top: 1px solid var(--line); }
     .watch-heading > div:first-child { flex: 1 1 auto; min-width: 0; }
     .watch-heading h1 { letter-spacing: -.04em; word-spacing: .05em; text-wrap: balance; }
@@ -774,7 +790,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5" stroke-linecap="round"/></svg>
           <input class="search-input" id="searchInput" type="search" placeholder="Search teams, leagues…" autocomplete="off" />
         </label>
-        <button class="icon-button refresh-button" id="refreshButton" aria-label="Refresh streams" title="Refresh streams"><svg id="refreshIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6.5L20 12M4 12l2 5.5A7 7 0 0 0 18.5 15" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="icon-button refresh-button" id="refreshButton" aria-label="Refresh streams" title="Refresh streams"><svg id="refreshIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button>
       </header>
       <main class="content" id="appContent" aria-live="polite">
         <div class="loading-grid"><div class="skeleton"><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line"></div></div></div><div class="skeleton"><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line"></div></div></div><div class="skeleton"><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line"></div></div></div></div>
@@ -797,7 +813,7 @@
         <span class="net-pill" id="netPillCache"><i></i><span>Saved streams</span></span>
       </div>
       <div class="net-actions">
-        <button class="btn-primary net-retry" id="netRetry" type="button" data-action="net-retry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5"/></svg><span>Try again</span></button>
+        <button class="btn-primary net-retry" id="netRetry" type="button" data-action="net-retry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg><span>Try again</span></button>
         <button class="btn-secondary" id="netCached" type="button" data-action="net-dismiss" hidden>View saved streams</button>
       </div>
       <div class="net-foot">We'll reconnect automatically as soon as you're back online.</div>
@@ -1238,9 +1254,9 @@
         $('#appContent').innerHTML = `<div class="eyebrow"><span class="eyebrow-line"></span>System health</div>
           <div class="page-heading"><div><h1>Status</h1><p class="heading-sub">Live availability of the servers behind your streams.</p></div></div>
           <section class="status-banner" data-state="${overall}">
-            <span class="status-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${overall === 'ok' ? '<path d="m5 12.5 4.5 4.5L19 7.5"/>' : overall === 'down' ? '<path d="M6 6l12 12M18 6 6 18"/>' : overall === 'warn' ? '<path d="M12 8v5m0 3.5h.01"/><path d="M10.3 4.6 2.8 17.5A2 2 0 0 0 4.5 20.5h15a2 2 0 0 0 1.7-3L13.7 4.6a2 2 0 0 0-3.4 0Z"/>' : '<path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5"/>'}</svg></span>
+            <span class="status-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${overall === 'ok' ? '<path d="m5 12.5 4.5 4.5L19 7.5"/>' : overall === 'down' ? '<path d="M6 6l12 12M18 6 6 18"/>' : overall === 'warn' ? '<path d="M12 8v5m0 3.5h.01"/><path d="M10.3 4.6 2.8 17.5A2 2 0 0 0 4.5 20.5h15a2 2 0 0 0 1.7-3L13.7 4.6a2 2 0 0 0-3.4 0Z"/>' : '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>'}</svg></span>
             <div class="status-banner-text"><h2>${title}</h2><p>${text}</p></div>
-            <div class="status-banner-actions"><span class="status-checked">${checkedText}</span><button class="btn-secondary recheck${health.checking ? ' loading' : ''}" type="button" data-action="recheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5"/></svg>${health.checking ? 'Checking…' : 'Check again'}</button></div>
+            <div class="status-banner-actions"><span class="status-checked">${checkedText}</span><button class="btn-secondary recheck${health.checking ? ' loading' : ''}" type="button" data-action="recheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>${health.checking ? 'Checking…' : 'Check again'}</button></div>
           </section>
           <div class="section-head"><h2 class="section-title"><span class="mini-mark"></span>Servers</h2><span class="section-link" style="pointer-events:none">Auto-refreshes every 30s</span></div>
           <div class="status-grid">${cards}</div>
@@ -1309,7 +1325,11 @@
         }
       });
       $('#searchInput').addEventListener('input', event => { state.query = event.target.value; if (['watch', 'status'].includes(getRoute().page)) go('#home'); else render(); });
-      $('#refreshButton').addEventListener('click', () => loadStreams(true));
+      $('#refreshButton').addEventListener('click', () => {
+        const button = $('#refreshButton'); const started = Date.now();
+        button.classList.add('spinning');
+        Promise.resolve(loadStreams(true)).finally(() => setTimeout(() => button.classList.remove('spinning'), Math.max(0, 600 - (Date.now() - started))));
+      });
       $('#menuToggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
       $('#sidebar').addEventListener('click', event => { if (event.target.closest('a')) closeSidebar(); });
       document.addEventListener('click', event => {

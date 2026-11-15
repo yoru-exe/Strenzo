@@ -18,3 +18,12 @@ After changing any file, bump `VERSION` in `sw.js` so installed copies pick up t
     python3 -m http.server 8000
 
 Then open http://localhost:8000 (service workers need localhost or https).
+
+## Link previews (Discord, Telegram, WhatsApp, X)
+
+The share image is `og-image.png` (1200×630). The GitHub Pages workflow replaces `__SITE_URL__` in `index.html` with your real address on every deploy.
+On any other host, replace `__SITE_URL__` yourself with your full site address (no trailing slash).
+
+Apps cache previews. After changing the image or text, refresh them with:
+- Discord / Telegram: send the link with a changed query, e.g. `https://your-site/?v=2` (Telegram: also message `@WebpageBot` with the link).
+- Facebook / WhatsApp: Facebook Sharing Debugger → "Scrape Again".
