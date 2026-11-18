@@ -205,10 +205,11 @@
     .watch-link { display: inline-flex; align-items: center; gap: 5px; color: var(--lime); font-size: 9px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
     .watch-link svg { width: 12px; height: 12px; }
     .empty-state { display: grid; place-items: center; min-height: 270px; padding: 36px; border: 1px dashed var(--line-strong); border-radius: 17px; text-align: center; }
-    .empty-icon { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 16px; color: var(--lime); background: rgba(53,214,160,.09); border-radius: 16px; }
+    .empty-icon { display: grid; place-items: center; flex: none; width: 54px; height: 54px; margin: 0 auto 16px; color: var(--lime); background: rgba(53,214,160,.09); border-radius: 16px; }
     .empty-icon svg { width: 23px; height: 23px; }
+    .empty-state > div { display: flex; flex-direction: column; align-items: center; max-width: 100%; }
     .empty-state h3 { margin: 0; font-size: 17px; }
-    .empty-state p { max-width: 380px; margin: 8px 0 18px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .empty-state p { max-width: 380px; margin: 8px auto 18px; color: var(--muted); font-size: 12px; line-height: 1.65; }
     .watch-layout { display: grid; grid-template-columns: minmax(0, 1fr) 285px; gap: 22px; align-items: start; }
     .player-panel { overflow: hidden; background: #05080b; border: 1px solid var(--line-strong); border-radius: 17px; box-shadow: var(--shadow); }
     .player-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 16px; background: #0e151c; border-bottom: 1px solid var(--line); }
@@ -218,9 +219,9 @@
     .player-frame { position: relative; aspect-ratio: 16 / 9; min-height: 220px; background: #030507; }
     .player-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #030507; }
     .player-placeholder { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; padding: 24px; text-align: center; background: radial-gradient(circle at 50% 40%, #14242b, #060a0f 70%); }
-    .player-placeholder .empty-icon { margin-bottom: 12px; }
+    .player-placeholder .empty-icon { margin: 0 auto 12px; }
     .player-placeholder h3 { margin: 0; font-size: 16px; }
-    .player-placeholder p { max-width: 390px; margin: 8px 0 0; color: #83939e; font-size: 11px; line-height: 1.6; }
+    .player-placeholder p { max-width: 390px; margin: 8px auto 0; color: #83939e; font-size: 11px; line-height: 1.6; }
     .player-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 14px 16px; background: #0e151c; border-top: 1px solid var(--line); }
     .source-list { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
     .source-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 31px; padding: 0 10px; color: #91a0aa; background: #141e27; border: 1px solid var(--line); border-radius: 7px; cursor: pointer; font-size: 9px; font-weight: 800; transition: .16s ease; }
@@ -1243,8 +1244,14 @@
       function renderSkeletons() {
         return `<div class="loading-grid">${Array.from({ length: 3 }, () => '<div class="skeleton"><div class="skeleton-body"><div class="skeleton-line short"></div><div class="skeleton-line medium"></div><div class="skeleton-line"></div></div></div>').join('')}</div>`;
       }
-      function emptyState(title, message, buttonText = 'Explore events', hash = '#home', action = '') {
-        return `<div class="empty-state"><div><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5"/><path d="m10 8 6 4-6 4V8Z" fill="currentColor" stroke="none"/></svg></div><h3>${esc(title)}</h3><p>${esc(message)}</p><a class="btn-primary" href="${hash}"${action ? ` data-action="${action}"` : ''}>${esc(buttonText)}</a></div></div>`;
+      const EMPTY_ICONS = {
+        play: '<circle cx="12" cy="12" r="8.5"/><path d="m10 8 6 4-6 4V8Z" fill="currentColor" stroke="none"/>',
+        star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z" stroke-linejoin="round"/>',
+        search: '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5" stroke-linecap="round"/>',
+        live: '<circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2" stroke-linecap="round"/>'
+      };
+      function emptyState(title, message, buttonText = 'Explore events', hash = '#home', action = '', icon = 'play') {
+        return `<div class="empty-state"><div><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">${EMPTY_ICONS[icon] || EMPTY_ICONS.play}</svg></div><h3>${esc(title)}</h3><p>${esc(message)}</p><a class="btn-primary" href="${hash}"${action ? ` data-action="${action}"` : ''}>${esc(buttonText)}</a></div></div>`;
       }
       // Spotlight: the top events rotate automatically (no arrows or dots).
       const HERO_SLIDES = 5, HERO_MS = 7000;
@@ -1320,11 +1327,11 @@
         if (state.loading && !state.streams.length) html += renderSkeletons();
         else if (items.length) html += `<div class="stream-grid">${items.map(streamCard).join('')}</div>`;
         else {
-          let titleText = 'No events found'; let message = 'There are no matching streams at the moment. Try another sport or check back soon.'; let button = 'Back to discover'; let hash = '#home';
-          if (route.page === 'live') { titleText = 'Nothing is live right now'; message = 'No source is currently marked live. Upcoming events and configured feeds will appear in Discover.'; button = 'See all events'; }
-          if (route.page === 'favorites') { titleText = 'No favorites yet'; message = 'Tap the star on any event to save it here for quick access.'; button = 'Find an event'; }
-          if (state.query.trim()) { titleText = 'No matches'; message = 'Try a different team, league, or sport name.'; button = 'Clear search'; hash = '#home'; }
-          html += emptyState(titleText, message, button, hash, state.query.trim() ? 'clear-search' : '');
+          let titleText = 'No events found'; let message = 'There are no matching streams at the moment. Try another sport or check back soon.'; let button = 'Back to discover'; let hash = '#home'; let icon = 'play';
+          if (route.page === 'live') { titleText = 'Nothing is live right now'; message = 'No source is currently marked live. Upcoming events and configured feeds will appear in Discover.'; button = 'See all events'; icon = 'live'; }
+          if (route.page === 'favorites') { titleText = 'No favorites yet'; message = 'Tap the star on any event to save it here for quick access.'; button = 'Find an event'; icon = 'star'; }
+          if (state.query.trim()) { titleText = 'No matches'; message = 'Try a different team, league, or sport name.'; button = 'Clear search'; hash = '#home'; icon = 'search'; }
+          html += emptyState(titleText, message, button, hash, state.query.trim() ? 'clear-search' : '', icon);
         }
         html += `<div class="footer-note"><span>${state.stale ? 'Showing cached data · ' : 'Data refreshes periodically · '}${state.lastUpdated ? `Updated ${new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(new Date(state.lastUpdated))}` : 'Waiting for API response'}</span><span>STRENZO · Build by AziF &amp; Yoru</span></div>`;
         $('#appContent').innerHTML = html;
