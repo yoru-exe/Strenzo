@@ -709,6 +709,28 @@
     .watch-link svg { transition: transform .18s var(--ease); }
     .stream-card:hover .watch-link svg { transform: translateX(3px); }
 
+    /* Keep the card play action visibly and exactly centered. */
+    .card-play {
+      position: absolute; z-index: 4; left: 50%; top: 50%;
+      display: grid; place-items: center;
+      width: 48px; height: 48px;
+      transform: translate(-50%, -50%);
+      color: #06150f;
+      background: rgba(83, 220, 170, .94);
+      border: 1px solid rgba(255,255,255,.34);
+      border-radius: 50%;
+      box-shadow: 0 10px 28px rgba(0,0,0,.38), 0 0 0 8px rgba(53,214,160,.08);
+      pointer-events: none;
+      transition: transform .18s var(--ease), background .18s ease;
+    }
+    .card-play svg { width: 20px; height: 20px; margin-left: 2px; }
+    .stream-card:hover .card-play { transform: translate(-50%, -50%) scale(1.08); background: #75efc1; }
+    .card-status, .card-fav { pointer-events: auto; }
+    @media (max-width: 420px) {
+      .card-play { width: 42px; height: 42px; box-shadow: 0 8px 22px rgba(0,0,0,.34), 0 0 0 6px rgba(53,214,160,.08); }
+      .card-play svg { width: 18px; height: 18px; }
+    }
+
     /* Empty states */
     .empty-state { background: radial-gradient(ellipse at 50% 0%, rgba(53,214,160,.05), transparent 65%); }
     .empty-state .btn-primary { display: inline-flex; }
@@ -896,7 +918,7 @@
       // Server order: preferred server first, then automatic backups.
       // Order matters: Primary, then Fallback, then Mirror.
       const SERVER_ROLES = ['Primary', 'Fallback', 'Mirror'];
-      const API_DOMAINS = ['https://strmfree.pk', 'https://streamfree.top', 'https://strmfree.st'];
+      const API_DOMAINS = ['https://streamfree.top', 'https://strmfree.pk', 'https://strmfree.st'];
       const DEFAULT_CATEGORIES = ['soccer', 'basketball', 'hockey', 'combat', 'baseball', 'football', 'racing', 'tennis', 'cricket'];
       const CACHE_TTL = 60 * 1000;
       const CATEGORY_CACHE_TTL = 10 * 60 * 1000;
@@ -906,7 +928,8 @@
       const state = {
         streams: [], categories: DEFAULT_CATEGORIES.slice(), favorites: readFavorites(), query: '',
         apiDomain: API_DOMAINS[0], loading: false, lastUpdated: null, stale: false,
-        selectedSource: 0, playerDomainIndex: 0, playerKey: null, toastTimer: null
+        selectedSource: 0, playerDomainIndex: 0, playerKey: null, toastTimer: null,
+        sourcesLoadingKey: null
       };
 
       function readFavorites() {
@@ -952,6 +975,36 @@
       function isLive(stream) { return Array.isArray(stream.sources) && stream.sources.some(source => source && source.live === true); }
       function liveSourceCount(stream) { return Array.isArray(stream.sources) ? stream.sources.filter(source => source && source.live === true).length : 0; }
       function sourceCount(stream) { return Array.isArray(stream.sources) ? stream.sources.length : 0; }
+      function qualityFromUrl(url) {
+        const match = String(url || '').match(/(\d{3,4})p/i);
+        if (!match) return 'HD';
+        const height = Number(match[1]);
+        if (height >= 2160) return '4K';
+        if (height >= 1080) return 'FHD';
+        if (height >= 720) return 'HD';
+        return 'SD';
+      }
+      function normalizeSources(stream) {
+        const normalized = [];
+        const add = source => {
+          if (!source || typeof source.url !== 'string') return;
+          const url = source.url.trim();
+          if (!url || normalized.some(item => item.url === url)) return;
+          normalized.push({
+            quality: String(source.quality || qualityFromUrl(url)).toUpperCase(),
+            url,
+            live: source.live === true
+          });
+        };
+        if (typeof stream.iframe === 'string') add({ quality: qualityFromUrl(stream.iframe), url: stream.iframe, live: true });
+        if (Array.isArray(stream.additional_sources)) stream.additional_sources.forEach(add);
+        if (Array.isArray(stream.sources)) stream.sources.forEach(add);
+        return normalized;
+      }
+      function normalizeStream(stream) {
+        if (!stream || typeof stream !== 'object') return stream;
+        return { ...stream, sources: normalizeSources(stream) };
+      }
       function formatEventTime(timestamp) {
         const numeric = Number(timestamp);
         if (!Number.isFinite(numeric) || numeric <= 0) return 'Schedule unavailable';
@@ -1065,6 +1118,7 @@
         throw lastError || new Error('All servers are unavailable');
       }
       async function loadStreams(force = false) {
+        if (state.loading && !force) return;
         const cached = readCache(STORAGE.streams, CACHE_TTL);
         if (!force && cached && Array.isArray(cached.data?.streams)) {
           state.streams = cached.data.streams;
@@ -1079,7 +1133,7 @@
         try {
           const payload = await requestJson('/api/v1/streams');
           if (!payload || !Array.isArray(payload.streams)) throw new Error('Unexpected streams response');
-          state.streams = payload.streams;
+          state.streams = payload.streams.map(normalizeStream);
           state.lastUpdated = Date.now();
           state.stale = false;
           hideNetModal();
@@ -1087,7 +1141,7 @@
           await loadCategories(false);
         } catch (error) {
           if (staleCache?.data && Array.isArray(staleCache.data.streams)) {
-            state.streams = staleCache.data.streams;
+            state.streams = staleCache.data.streams.map(normalizeStream);
             state.lastUpdated = staleCache.savedAt || null;
             state.stale = true;
             showNetModal(navigator.onLine ? 'api' : 'offline', true);
@@ -1117,6 +1171,31 @@
           }
         } catch (error) { console.warn('Category list unavailable; using built-in categories.', error); }
       }
+      async function refreshStreamSources(stream) {
+        if (!stream?.stream_key || state.sourcesLoadingKey === stream.stream_key) return;
+        state.sourcesLoadingKey = stream.stream_key;
+        try {
+          const payload = await requestJson(`/api/v1/sources/${encodeURIComponent(stream.stream_key)}`);
+          if (!payload || !Array.isArray(payload.sources)) throw new Error('Unexpected sources response');
+          const hasLiveSource = payload.sources.some(source => source && source.live === true);
+          const updated = normalizeStream({
+            ...stream,
+            iframe: hasLiveSource ? stream.iframe : undefined,
+            sources: payload.sources
+          });
+          const index = state.streams.findIndex(item => item.stream_key === stream.stream_key);
+          if (index >= 0) state.streams[index] = updated;
+          render();
+        } catch (error) {
+          if (String(error.message || '').includes('404')) {
+            showToast('This stream has ended or is no longer live.');
+          } else {
+            console.warn('Stream source refresh failed:', error);
+          }
+        } finally {
+          state.sourcesLoadingKey = null;
+        }
+      }
       function renderSidebar() {
         const nav = $('#categoryNav');
         if (!nav) return;
@@ -1138,6 +1217,7 @@
           <a class="card-thumb" href="#watch/${key}" aria-label="Watch ${esc(stream.name)}">
             ${thumb ? `<img src="${esc(thumb)}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">` : ''}
             <span class="thumb-fallback"${thumb ? ' style="display:none"' : ''}><span>${categoryIcon(category)}</span></span>
+            <span class="card-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.8c0-.9 1-1.5 1.8-1l10 6.1a1.2 1.2 0 0 1 0 2L8.8 18a1.2 1.2 0 0 1-1.8-1V4.8Z"/></svg></span>
             <span class="card-status ${live ? '' : 'waiting'}">${live ? 'Live now' : 'Feed setup'}</span>
           </a>
           <button class="card-fav ${saved ? 'saved' : ''}" data-action="favorite" data-key="${key}" aria-label="${saved ? 'Remove from' : 'Add to'} favorites" title="${saved ? 'Remove favorite' : 'Add favorite'}">
@@ -1256,6 +1336,7 @@
           return;
         }
         const sources = Array.isArray(stream.sources) ? stream.sources : [];
+        if (!state.sourcesLoadingKey) refreshStreamSources(stream);
         if (state.playerKey !== stream.stream_key) { state.playerKey = stream.stream_key; state.selectedSource = Math.max(0, sources.findIndex(source => source && source.live === true)); state.playerDomainIndex = getInitialPlayerDomainIndex(sources[state.selectedSource]); }
         const source = sources[state.selectedSource] || sources[0];
         const sourcePath = source ? getAllowedUrlPath(source.url) : '';
@@ -1488,7 +1569,7 @@
       const initialCache = readCache(STORAGE.streams, CACHE_TTL);
       const categoryCache = readCache(STORAGE.categories, CATEGORY_CACHE_TTL);
       if (initialCache?.data?.streams && Array.isArray(initialCache.data.streams)) {
-        state.streams = initialCache.data.streams;
+        state.streams = initialCache.data.streams.map(normalizeStream);
         state.lastUpdated = initialCache.savedAt;
       }
       if (categoryCache?.data?.categories && Array.isArray(categoryCache.data.categories)) state.categories = categoryCache.data.categories;
